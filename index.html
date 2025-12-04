@@ -23,13 +23,14 @@
     }
     * { box-sizing: border-box; }
 
-    body {
+    html, body {
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--bg);
       color: var(--text-main);
       -webkit-text-size-adjust: 100%;
+      touch-action: manipulation;
     }
 
     .page-wrapper {
@@ -39,77 +40,86 @@
     main {
       max-width: 900px;
       margin: 0 auto;
-      padding: 16px 16px 40px;
+      padding: 12px 16px 24px;
     }
 
-    h1 {
-      font-size: 1.6rem;
+    #site-title {
+      margin-top: 14px;
+      margin-bottom: 10px;
       text-align: center;
-      margin: 20px 0 14px;
+    }
+
+    #site-title h1 {
+      font-size: 1.4rem;
+      margin: 0;
       letter-spacing: 0.04em;
     }
 
+    body.is-result #site-title {
+      display: none;
+    }
+
     h2 {
-      font-size: 1.1rem;
-      margin: 8px 0 10px;
+      font-size: 1rem;
+      margin: 6px 0 10px;
     }
 
     .card {
       background: var(--card-bg);
-      border-radius: 24px;
+      border-radius: 22px;
       box-shadow: var(--shadow);
-      padding: 18px 18px 20px;
-      margin: 8px 0 20px;
+      padding: 16px 16px 18px;
+      margin: 6px 0 16px;
       border: 1px solid var(--border);
     }
 
     .category-list {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 10px 14px;
-      margin-top: 12px;
+      gap: 8px 12px;
+      margin-top: 8px;
     }
 
     .category-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 9px 12px;
+      gap: 6px;
+      padding: 8px 11px;
       border-radius: 999px;
       border: 1px solid var(--border);
       background: #fff;
-      font-size: 0.9rem;
+      font-size: 0.84rem;
     }
 
     .category-item input {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
     }
 
     .notice {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: var(--text-sub);
       line-height: 1.6;
-      margin-top: 10px;
+      margin-top: 8px;
       white-space: pre-line;
     }
 
     .btn-primary,
     .btn-secondary,
     .btn-ghost,
-    .btn-danger {
+    .btn-reset {
       display: inline-flex;
       justify-content: center;
       align-items: center;
-      min-height: 34px;
-      padding: 7px 12px;
+      min-height: 32px;
+      padding: 6px 12px;
       border-radius: 999px;
       border: none;
-      font-size: 0.86rem;
+      font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
       text-decoration: none;
-      transition: transform 0.05s ease, box-shadow 0.05s ease, background 0.1s ease;
+      transition: transform 0.05s ease, box-shadow 0.05s ease, background 0.1s ease, border-color 0.1s ease;
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -126,77 +136,77 @@
     .btn-secondary {
       background: #fff;
       color: var(--accent);
-      border: 1px solid var(--accent);
+      border: 1.5px solid var(--accent);
     }
 
     .btn-ghost {
-      background: transparent;
+      background: #fff;
       color: var(--text-sub);
-      border: 1px dashed var(--border);
+      border: 1px solid #cccccc;
     }
 
-    .btn-danger {
-      background: #fff0f4;
-      color: #c62828;
-      border: 1px solid #ffcdd2;
+    .btn-reset {
+      background: #fff;
+      color: var(--accent);
+      border: 1.5px solid var(--accent);
+      border-radius: 999px;
+      padding-inline: 14px;
+    }
+
+    .btn-secondary:active,
+    .btn-ghost:active,
+    .btn-reset:active {
+      transform: translateY(1px);
     }
 
     .btn-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
     }
     .btn-row.center {
       justify-content: center;
-    }
-    .btn-row.space-between {
-      justify-content: space-between;
-    }
-
-    .btn-secondary:active,
-    .btn-ghost:active,
-    .btn-danger:active {
-      transform: translateY(1px);
     }
 
     /* ソート中画面 */
     .song-choice-wrapper {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-bottom: 14px;
+      gap: 8px;
+      margin-bottom: 10px;
+      margin-top: 6px;
     }
 
     .song-choice {
-      padding: 14px 14px;
+      padding: 11px 12px;
       border-radius: 16px;
       background: #fff;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.03);
       cursor: pointer;
-      border: 2px solid transparent;
+      border: 1.5px solid #d8d0ff;
       text-align: center;
       -webkit-tap-highlight-color: transparent;
     }
 
     .song-choice-title {
-      font-size: 1rem;
+      font-size: 0.96rem;
       font-weight: 600;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
 
-    /* ソート中は収録表示なし */
     .song-choice-album {
-      display: none;
+      display: none; /* ソート中は収録は表示しない */
     }
 
-    .song-choice:hover {
-      border-color: var(--accent-sub);
+    .song-choice:active {
+      transform: translateY(1px);
+      border-color: var(--accent);
     }
 
     .sort-sub-btn-row {
       display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 6px;
+      margin-bottom: 8px;
       flex-wrap: wrap;
     }
 
@@ -213,18 +223,18 @@
 
     /* 進捗バー */
     .progress-area {
-      margin-top: 12px;
-      font-size: 0.82rem;
+      margin-top: 10px;
+      font-size: 0.72rem;
     }
     .progress-text {
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       color: var(--text-sub);
     }
     .progress-bar {
       width: 100%;
-      height: 8px;
+      height: 7px;
       border-radius: 999px;
-      background: #f0f0f5;
+      background: #f0eefb;
       overflow: hidden;
     }
     .progress-bar-inner {
@@ -237,45 +247,45 @@
 
     /* 結果画面 */
     .result-notice {
-      font-size: 0.72rem;
-      color: #b00020;
-      margin-bottom: 8px;
+      font-size: 0.7rem;
+      color: var(--text-sub);
+      margin-bottom: 6px;
       white-space: pre-line;
     }
 
     .share-row {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 10px;
       flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .share-row .btn-primary,
     .share-row .btn-secondary {
-      min-height: 32px;
-      padding: 6px 11px;
-      font-size: 0.82rem;
+      min-height: 30px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
     }
 
     .result-wrapper {
       background: #fff;
-      border-radius: 18px;
-      padding: 14px 14px 6px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 10px 6px;
+      /* 枠と影は card 側に任せる（二重枠防止） */
     }
 
     .result-title {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
       text-align: left;
-      margin: 4px 0 8px;
+      margin: 2px 0 6px;
     }
 
     .result-instruction {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       color: var(--text-sub);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .song-result-list {
@@ -285,7 +295,7 @@
     }
 
     .song-result-item {
-      padding: 7px 2px;
+      padding: 6px 2px;
       border-bottom: 1px solid #f1f1f5;
       cursor: pointer;
     }
@@ -301,18 +311,18 @@
     }
 
     .song-result-title-line {
-      font-size: 0.94rem;
+      font-size: 0.9rem;
       font-weight: 600;
       margin-bottom: 1px;
     }
 
     .song-result-album {
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       color: var(--text-sub);
     }
 
     .song-result-credits {
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       color: var(--text-sub);
       margin-top: 3px;
       display: none;
@@ -323,11 +333,21 @@
       display: block;
     }
 
+    .result-footer-link {
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    .result-footer-link button {
+      font-weight: 500;
+      font-size: 0.78rem;
+    }
+
     footer {
       max-width: 900px;
-      margin: 0 auto 16px;
+      margin: 0 auto 10px;
       padding: 0 16px;
-      font-size: 0.78rem;
+      font-size: 0.74rem;
       color: var(--text-sub);
       text-align: center;
     }
@@ -344,7 +364,7 @@
     @media (min-width: 700px) {
       .song-choice-wrapper {
         max-width: 520px;
-        margin: 0 auto 14px;
+        margin: 4px auto 10px;
       }
       .result-wrapper {
         max-width: 640px;
@@ -356,13 +376,15 @@
 <body>
   <div class="page-wrapper">
     <main>
-      <h1>BEYOOOOONDS楽曲ソート</h1>
+      <div id="site-title">
+        <h1>BEYOOOOONDS楽曲ソート</h1>
+      </div>
 
       <!-- トップ画面 -->
       <section id="screen-start" class="screen active">
         <div class="card">
           <h2>カテゴリを選択してください</h2>
-          <p style="font-size:0.82rem;color:var(--text-sub);margin-top:4px;">
+          <p style="font-size:0.78rem;color:var(--text-sub);margin-top:2px;">
             複数選択できます。
           </p>
           <div class="category-list">
@@ -384,7 +406,7 @@
             </label>
           </div>
 
-          <div style="margin-top:16px;text-align:center;">
+          <div style="margin-top:12px;text-align:center;">
             <button class="btn-primary" id="btn-start-sort">ソートをはじめる</button>
           </div>
 
@@ -399,9 +421,6 @@
       <section id="screen-sort" class="screen">
         <div class="card">
           <h2>好きな曲をタップで選択してください</h2>
-          <p style="font-size:0.8rem;color:var(--text-sub);margin-top:2px;">
-            直感で選んで大丈夫です。悩んだら「引き分け」も使ってください。
-          </p>
 
           <div class="song-choice-wrapper" id="choice-wrapper">
             <div class="song-choice" id="choice-top">
@@ -420,7 +439,7 @@
           </div>
 
           <div class="sort-bottom-row">
-            <button class="btn-danger" id="btn-reset">最初からやり直す</button>
+            <button class="btn-reset" id="btn-reset">最初からやり直す</button>
           </div>
 
           <div class="progress-area">
@@ -453,9 +472,13 @@
               BEYOOOOONDS楽曲ソート 結果
             </div>
             <p class="result-instruction" data-html2canvas-ignore="true">
-曲名をタップすると楽曲のクレジットが表示されます。（画像保存の際には表示されません）
+曲名をタップすると楽曲のクレジットが表示されます。
             </p>
             <ul class="song-result-list" id="result-list"></ul>
+          </div>
+
+          <div class="result-footer-link">
+            <button class="btn-ghost" id="btn-back-to-top">トップページに戻る</button>
           </div>
         </div>
       </section>
@@ -471,7 +494,19 @@
     const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbx8dnNJPniz-1d9A6BD8ei_G3o5B-BuX31GNll1RqgR34Ql_colAC-9RABHktaDzDy0/exec";
     // ==== 設定ここまで ====
 
-    // 楽曲データ（あなたが送ってくれたリスト）
+    // ダブルタップでズームされるのを防ぐ
+    (function preventDoubleTapZoom() {
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', function (event) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+          event.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, false);
+    })();
+
+    // 楽曲データ
     const rawSongs = [
       { title: "眼鏡の男の子",
         album: "1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",
@@ -1150,7 +1185,7 @@
       },
       { title: "ファーストステップ！！",
         album: "演劇女子部「ビヨサイユ宮殿」",
-        artist: "演劇女子部(BEYOOOOONDS)",
+        artist: "演劇女子部(BEYOOOOOUNDS)",
         lyric: "毛利亘宏",
         compose: "和田俊輔",
         arrange: "文愛実"
@@ -1263,12 +1298,16 @@
       sort: document.getElementById("screen-sort"),
       result: document.getElementById("screen-result")
     };
+    const bodyEl = document.body;
+    const siteTitle = document.getElementById("site-title");
+
     const btnStartSort = document.getElementById("btn-start-sort");
     const btnDraw = document.getElementById("btn-draw");
     const btnBack = document.getElementById("btn-back");
     const btnReset = document.getElementById("btn-reset");
     const btnShareX = document.getElementById("btn-share-x");
     const btnSaveImage = document.getElementById("btn-save-image");
+    const btnBackToTop = document.getElementById("btn-back-to-top");
     const categoryCheckboxes = document.querySelectorAll(".category-checkbox");
 
     const choiceTop = document.getElementById("choice-top");
@@ -1285,6 +1324,11 @@
       Object.keys(screens).forEach(key => {
         screens[key].classList.toggle("active", key === name);
       });
+      if (name === "result") {
+        bodyEl.classList.add("is-result");
+      } else {
+        bodyEl.classList.remove("is-result");
+      }
     }
 
     // ソート状態
@@ -1400,7 +1444,7 @@
     }
 
     function handleChooseBottom() {
-      // 下（既存順位）の方が好き
+      // 下（既存）の方が好き
       historyStack.push(cloneState());
       comparisonsDone++;
       bsLow = bsMid + 1;
@@ -1409,7 +1453,7 @@
     }
 
     function handleDraw() {
-      // 引き分け：midのすぐ下に挿入
+      // 引き分け：mid のすぐ下に挿入
       historyStack.push(cloneState());
       comparisonsDone++;
       const pos = bsMid + 1;
@@ -1477,9 +1521,10 @@
 
     function sendResultToSheet(rankingTitles) {
       const mode = currentModeLabel || "";
-      const rankingStr = rankingTitles.join("|");
+      // 区切りをスラッシュに変更
+      const rankingStr = rankingTitles.join("/");
       const top1 = rankingTitles[0] || "";
-      const top5 = rankingTitles.slice(0, 5).join("|");
+      const top5 = rankingTitles.slice(0, 5).join("/");
 
       const payload = {
         timestamp: new Date().toISOString(),
@@ -1563,6 +1608,7 @@
     btnDraw.addEventListener("click", handleDraw);
     btnBack.addEventListener("click", handleBack);
     btnReset.addEventListener("click", resetAll);
+    btnBackToTop.addEventListener("click", resetAll);
 
     btnShareX.addEventListener("click", () => {
       const titles = Array.from(resultList.querySelectorAll(".song-result-title-line"))
