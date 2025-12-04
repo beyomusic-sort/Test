@@ -3,285 +3,308 @@
 <head>
 <meta charset="UTF-8">
 <title>BEYOOOOONDS楽曲ソート</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <!-- 画像保存用 -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
-:root{
-  --accent:#5b4bb5;
-  --accent-light:#d7d3ff;
-  --accent-soft:#f6f5ff;
-  --bg:#fff;
-  --text:#222;
-  --sub:#6d6d6d;
-  --border:#e6e6e6;
-}
+  :root {
+    --accent: #5b4bb5;
+    --accent-light: #e1ddff;
+    --accent-soft: #f6f5ff;
+    --text: #222;
+    --subtext: #666;
+    --bg: #ffffff;
+    --card: #ffffff;
+    --border: #e4e4e4;
+  }
 
-/* ===== 全体 ===== */
-*{ box-sizing:border-box; }
+  * { box-sizing: border-box; }
 
-body{
-  margin:0;
-  background:var(--bg);
-  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;
-  color:var(--text);
-  padding:12px;
-  -webkit-user-select:none;
-}
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    margin: 0;
+    padding: 16px 10px 40px;
+    color: var(--text);
+    -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
+  }
 
-button{
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
-}
+  button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-/* ===== レイアウト ===== */
-.page-wrap{
-  max-width:520px;
-  margin:0 auto;
-}
+  .page-wrap {
+    max-width: 520px;
+    margin: 0 auto;
+  }
 
-.card{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:18px;
-  margin:0 auto 18px;
-}
+  h1 {
+    font-size: 20px;
+    margin: 0 0 8px;
+    font-weight: 700;
+    text-align: center;
+  }
 
-.hidden{ display:none; }
+  .subtitle {
+    font-size: 12px;
+    color: var(--subtext);
+    margin: 0 0 10px;
+    text-align: center;
+  }
 
-/* ===== 見出し・テキスト ===== */
-h1{
-  margin:0 0 10px;
-  font-size:20px;
-  font-weight:800;
-  text-align:center;
-}
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 16px 14px;
+    margin: 0 auto 16px;
+    border: 1px solid var(--border);
+  }
 
-.subtitle{
-  text-align:center;
-  color:var(--sub);
-  font-size:13px;
-  margin-bottom:14px;
-}
+  .hidden { display: none; }
 
-.notice{
-  font-size:11px;
-  color:var(--sub);
-  line-height:1.5;
-  margin-top:12px;
-}
+  /* トップ画面 */
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+  }
 
-/* トップページの注意書きだけ左揃え */
-#setup-screen .notice{
-  text-align:left;
-}
+  label {
+    font-size: 17px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-/* ===== ボタン ===== */
-.btn-main{
-  width:100%;
-  padding:12px 0;
-  border-radius:10px;
-  border:none;
-  background:var(--accent);
-  color:#fff;
-  font-weight:700;
-  font-size:15px;
-  margin-top:12px;
-}
+  input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    accent-color: var(--accent);
+  }
 
-.btn-sub{
-  flex:1;
-  background:#fff;
-  border-radius:10px;
-  border:1px solid var(--accent-light);
-  padding:10px 0;
-  font-size:13px;
-  font-weight:700;
-  color:var(--text);
-}
+  .btn {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    margin-top: 12px;
+    text-align: center;
+  }
 
-.btn-ghost{
-  border:none;
-  background:transparent;
-  color:var(--sub);
-  font-size:12px;
-}
+  .btn-secondary {
+    background: #fff;
+    color: var(--accent);
+    border: 1px solid var(--accent-light);
+  }
 
-.btn-small{
-  padding:6px 10px;
-  font-size:12px;
-  border-radius:8px;
-  border:1px solid var(--accent-light);
-  background:#fff;
-  font-weight:700;
-}
+  .btn-ghost {
+    border: none;
+    background: transparent;
+    color: var(--subtext);
+  }
 
-/* ===== カテゴリ選択 ===== */
-.checkbox-group{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.checkbox-group label{
-  font-size:17px;
-  font-weight:600;
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-.checkbox-group input{
-  width:22px;
-  height:22px;
-  accent-color:var(--accent);
-}
+  .btn-small {
+    width: auto;
+    padding-inline: 10px;
+    font-size: 12px;
+  }
 
-/* ===== ソート画面 ===== */
-.progress{
-  height:10px;
-  background:#eee;
-  border-radius:999px;
-  margin-bottom:14px;
-  overflow:hidden;
-}
-.progress-bar{
-  height:100%;
-  width:0%;
-  background:var(--accent);
-  transition:width .25s;
-}
+  /* ソート画面 */
+  .progress-wrap {
+    margin-bottom: 8px;
+  }
 
-.choice-btn{
-  width:100%;
-  background:#fff;
-  border:1px solid var(--accent-light);
-  border-radius:10px;
-  padding:14px;
-  font-size:16px;
-  font-weight:600;
-  text-align:center;
-  margin-bottom:10px;
-}
+  .progress-text {
+    font-size: 11px;
+    color: var(--subtext);
+    text-align: right;
+    margin-bottom: 2px;
+  }
 
-.sub-row{
-  display:flex;
-  gap:10px;
-  margin-top:6px;
-}
+  .progress-bar-container {
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: #f1f1f1;
+    overflow: hidden;
+  }
 
-.sort-restart-wrap{
-  margin-top:10px;
-  text-align:center;
-}
+  .progress-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: var(--accent);
+    transition: width 0.2s ease-out;
+  }
 
-/* ===== 結果部分 ===== */
-#result-note{
-  text-align:center;
-  font-size:11px;
-  color:var(--sub);
-  margin-bottom:6px;
-}
+  .choice-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
 
-#result-screen.card{
-  padding:22px 18px;
-}
+  .choice-btn {
+    background: #fff;
+    border: 1px solid var(--accent-light);
+    padding: 10px 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    line-height: 1.4;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .choice-btn:active {
+    color: var(--text);
+  }
 
-.result-buttons{
-  display:flex;
-  justify-content:flex-end;
-  gap:6px;
-  margin-bottom:10px;
-}
+  .sub-buttons {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
 
-.result-hint{
-  font-size:11px;
-  color:var(--sub);
-  margin:8px 0 12px;
-  text-align:center;
-}
+  .sub-buttons .btn-sub {
+    flex: 1;
+    padding-block: 8px;
+    font-size: 12px;
+  }
 
-/* 画像に写るエリア：少し余白を広めに */
-#result-capture{
-  padding:20px 12px 18px;
-}
+  .sort-restart-wrap {
+    margin-top: 12px;
+    text-align: center;
+  }
 
-/* テーブル */
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-td,th{
-  padding:10px 4px;
-  border-bottom:1px solid var(--border);
-  text-align:center;
-}
+  /* 結果画面 */
+  #result-screen.card {
+    padding: 22px 18px;
+  }
 
-th{
-  font-size:11px;
-  color:var(--sub);
-}
+  .result-header-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
 
-.rank{
-  width:44px;
-  font-size:12px;
-  font-weight:800;
-  color:var(--accent);
-}
+  .result-hint {
+    font-size: 11px;
+    color: var(--subtext);
+    margin: 12px 0 16px;
+    text-align: center;
+  }
 
-.song-main{
-  font-size:17px;
-  font-weight:700;
-}
-.song-sub{
-  font-size:12px;
-  color:var(--sub);
-  margin-top:3px;
-}
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 4px;
+    font-size: 13px;
+  }
 
-.song-row{ cursor:pointer; }
+  th, td {
+    padding: 10px 6px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    text-align: center;
+    line-height: 1.55;
+  }
 
-.song-row:hover{
-  background:var(--accent-soft);
-}
+  th {
+    font-size: 11px;
+    color: var(--subtext);
+  }
 
-/* クレジット行（背景の紫をなくす） */
-.detail-row td{
-  background:#ffffff;
-  padding:6px 10px;
-}
+  .rank-cell {
+    width: 40px;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 12px;
+  }
 
-.credit-line{
-  font-size:11px;
-  text-align:left;
-  margin:1px 0;
-}
-.credit-label{
-  font-weight:700;
-  color:var(--accent);
-  margin-right:4px;
-}
+  .title-main {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    text-align: center;
+    word-break: keep-all;
+  }
 
-/* フッター */
-.footer{
-  text-align:center;
-  font-size:11px;
-  color:var(--sub);
-  margin-top:16px;
-}
-.footer a{
-  color:var(--accent);
-  font-weight:700;
-  text-decoration:none;
-}
+  .title-sub {
+    font-size: 12px;
+    color: var(--subtext);
+    text-align: center;
+    opacity: 0.85;
+  }
+
+  tr.song-row {
+    -webkit-tap-highlight-color: transparent;
+  }
+  tr.song-row:hover {
+    background: var(--accent-soft);
+  }
+
+  tr.detail-row td {
+    background: #fafaff;
+    padding: 6px;
+  }
+
+  .credit-line {
+    font-size: 11px;
+    margin: 1px 0;
+    text-align: left;
+  }
+
+  .credit-label {
+    font-weight: 600;
+    color: var(--accent);
+    margin-right: 4px;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 11px;
+    color: var(--subtext);
+  }
+
+  .footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .notice {
+    max-width: 520px;
+    margin: 0 auto 8px;
+    font-size: 11px;
+    color: var(--subtext);
+    text-align: center;
+  }
+
+  /* トップページの注意書きだけ左揃え */
+  #setup-screen .notice {
+    text-align: left;
+  }
 </style>
 </head>
 
 <body>
 <div class="page-wrap">
 
-  <!-- ===== 設定画面 ===== -->
+  <!-- 設定画面 -->
   <div id="setup-screen" class="card">
     <h1>BEYOOOOONDS楽曲ソート</h1>
     <p class="subtitle">ソートに含めたいカテゴリを選んでください。</p>
@@ -293,53 +316,61 @@ th{
       <label><input type="checkbox" name="category" value="STAGE" checked> 演劇女子部</label>
     </div>
 
-    <button id="start-button" class="btn-main">ソート開始</button>
+    <button id="start-button" class="btn">ソート開始</button>
 
-    <p class="notice">
+    <p class="notice" style="margin-top:12px;">
       ※本ソートは非公式です。権利元や製作者の方々とは一切関係ございません。<br>
       ※ソート対象は音源リリース済みで歌唱が含まれた楽曲のみです。寸劇・演奏のみの楽曲は登録しておりません。
     </p>
   </div>
 
-  <!-- ===== ソート画面 ===== -->
+  <!-- ソート画面 -->
   <div id="sort-screen" class="card hidden">
     <h1>どっちが好き？</h1>
 
-    <div class="progress">
-      <div id="progress-bar" class="progress-bar"></div>
+    <div class="progress-wrap">
+      <div id="progress-text" class="progress-text"></div>
+      <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
     </div>
 
-    <button id="choice-left" class="choice-btn"></button>
-    <button id="choice-right" class="choice-btn"></button>
+    <div class="choice-buttons">
+      <button id="choice-left"  class="choice-btn"></button>
+      <button id="choice-right" class="choice-btn"></button>
+    </div>
 
-    <div class="sub-row">
-      <button id="choice-draw" class="btn-sub">引き分け</button>
-      <button id="back-button" class="btn-sub">ひとつ戻る</button>
+    <div class="sub-buttons">
+      <button id="choice-draw" class="btn btn-secondary btn-sub">引き分け</button>
+      <button id="back-button"  class="btn btn-ghost btn-sub">ひとつ戻る</button>
     </div>
 
     <div class="sort-restart-wrap">
-      <button id="restart-button-sort" class="btn-ghost">最初からやり直す</button>
+      <button id="restart-button-sort" class="btn btn-ghost" style="font-size:12px;">
+        最初からやり直す
+      </button>
     </div>
   </div>
 
-  <!-- ===== 結果注意書き（画像には入らない） ===== -->
+  <!-- 注意書き（結果の上部・画像には写らない） -->
   <div id="result-note" class="notice hidden">
     ※このページを閉じると結果は表示されなくなります。必要な場合は、あらかじめ画像を保存するか共有してください。
   </div>
 
-  <!-- ===== 結果画面 ===== -->
+  <!-- 結果画面 -->
   <div id="result-screen" class="card hidden">
-    <div class="result-buttons">
-      <button id="save-image" class="btn-small">画像保存</button>
-      <button id="share-x" class="btn-small">Xで共有</button>
+    <div class="result-header-row">
+      <button id="save-image" class="btn btn-secondary btn-small">画像保存</button>
+      <button id="share-x" class="btn btn-small">Xで共有</button>
     </div>
 
     <div class="result-hint">
       曲名をタップすると楽曲のクレジットが表示されます。
     </div>
 
-    <div id="result-capture">
+    <div id="result-capture" style="padding:12px 6px;">
       <h1>BEYOOOOONDS楽曲ソート 結果</h1>
+
       <table>
         <thead>
           <tr><th>順位</th><th>曲</th></tr>
@@ -348,9 +379,7 @@ th{
       </table>
     </div>
 
-    <div style="text-align:center;margin-top:10px;">
-      <button id="restart-button" class="btn-ghost">最初からやり直す</button>
-    </div>
+    <button id="restart-button" class="btn btn-ghost" style="margin-top:10px;">最初からやり直す</button>
   </div>
 
   <div class="footer">
@@ -358,7 +387,7 @@ th{
     <a href="https://x.com/beyomusicsort" target="_blank" rel="noopener noreferrer">@beyomusicsort</a>
   </div>
 
-</div><!-- /.page-wrap -->
+</div><!-- /page-wrap -->
 
 <script>
 /* ========= ログ送信先（GASのURL） ========= */
@@ -413,6 +442,7 @@ const allSongs = [
   {id:45,title:"ディスコ・カーニバル",category:"BEYOOOOONDS",recording:"6thシングル Do-Did-Done/あゝ君に転生",vocal:"BEYOOOOONDS",lyricist:"西野蒟蒻",composer:"Nicklas Eklund / Ida Pihlgren / Shun Kusakawa",arranger:"Nicklas Eklund"},
   {id:46,title:"マイ・ファースト・ピアス",category:"BEYOOOOONDS",recording:"6thシングル Do-Did-Done/あゝ君に転生",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"星部ショウ"},
   {id:47,title:"最KOO DE DANCE",category:"BEYOOOOONDS",recording:"コラボレーションシングル",vocal:"DJ KOO × BEYOOOOONDS",lyricist:"星部ショウ / DJ KOO",composer:"星部ショウ",arranger:"星部ショウ"},
+  /* 3rdアルバム曲は除外 */
   {id:55,title:"愛はまるで静電気",category:"SOLO",recording:"配信",vocal:"山﨑夢羽",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"平井祥一郎"},
   {id:56,title:"星の羊たち",category:"SOLO",recording:"Graduation Memorial CD",vocal:"島倉りか",lyricist:"筒美京平",composer:"橋本淳",arranger:"SHUNTARO"},
   {id:57,title:"泡沫ライラック",category:"SOLO",recording:"月刊偶像",vocal:"島倉りか",lyricist:"mido(THE BINARY)",composer:"山川恵津子",arranger:"山川恵津子"},
@@ -476,7 +506,7 @@ const allSongs = [
   {id:115,title:"フランスレボリューション",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"}
 ];
 
-/* ========= DOM 取得 ========= */
+/* ========= DOM取得 ========= */
 const setupScreen   = document.getElementById("setup-screen");
 const sortScreen    = document.getElementById("sort-screen");
 const resultScreen  = document.getElementById("result-screen");
@@ -487,131 +517,143 @@ const choiceLeftBtn = document.getElementById("choice-left");
 const choiceRightBtn= document.getElementById("choice-right");
 const choiceDrawBtn = document.getElementById("choice-draw");
 const backButton    = document.getElementById("back-button");
-const restartSortBtn= document.getElementById("restart-button-sort");
-const restartBtn    = document.getElementById("restart-button");
+const restartButton = document.getElementById("restart-button");
+const restartButtonSort = document.getElementById("restart-button-sort");
+const progressText  = document.getElementById("progress-text");
 const progressBar   = document.getElementById("progress-bar");
 const resultBody    = document.getElementById("result-body");
 const saveImageBtn  = document.getElementById("save-image");
 const shareXBtn     = document.getElementById("share-x");
 
-/* ========= 状態 ========= */
+/* ========= ソート状態 ========= */
 let activeSongs = [];
-let selectedCategories = [];
-let order = [];          // activeSongsのインデックス順
-let currentIndex = 0;    // 今から挿入する曲のインデックス（activeSongs内）
+let order = [];          // activeSongs の index の並び
+let insertIndex = 0;     // 今から挿入する曲の index
 let low = 0, high = 0, mid = 0;
-let finished = false;
-let historyStack = [];   // 戻る用
+let historyStack = [];
 let currentSortedSongs = [];
+let selectedCategories = [];
 
-/* ========= ユーティリティ ========= */
-function shuffle(array){
-  for(let i=array.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [array[i],array[j]] = [array[j],array[i]];
+/* ---------- ユーティリティ：シャッフル ---------- */
+function shuffle(array) {
+  const arr = array.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  return array;
+  return arr;
 }
 
-function updateProgress(){
-  if(!activeSongs.length){
+/* ---------- 履歴 ---------- */
+function pushHistory() {
+  historyStack.push({
+    order: [...order],
+    insertIndex,
+    low,
+    high
+  });
+}
+
+function popHistory() {
+  if (!historyStack.length) return;
+  const st = historyStack.pop();
+  order = [...st.order];
+  insertIndex = st.insertIndex;
+  low = st.low;
+  high = st.high;
+  showComparison();
+}
+
+/* ---------- 進捗 ---------- */
+function updateProgress() {
+  if (!activeSongs.length) {
+    progressText.textContent = "";
     progressBar.style.width = "0%";
     return;
   }
-  const done = Math.min(currentIndex, activeSongs.length);
-  const percent = Math.floor((done/activeSongs.length)*100);
+  const percent = Math.floor((insertIndex / activeSongs.length) * 100);
+  progressText.textContent = percent + "%";
   progressBar.style.width = percent + "%";
 }
 
-/* ========= 画面遷移 ========= */
-function showSetup(){
-  setupScreen.classList.remove("hidden");
-  sortScreen.classList.add("hidden");
-  resultScreen.classList.add("hidden");
-  resultNote.classList.add("hidden");
+/* ---------- ソート初期化 ---------- */
+function initSort() {
+  order = [];
+  insertIndex = 0;
+  low = 0;
+  high = 0;
+  mid = 0;
+  historyStack = [];
+  currentSortedSongs = [];
+  updateProgress();
 }
 
-function showSort(){
-  setupScreen.classList.add("hidden");
-  resultScreen.classList.add("hidden");
-  resultNote.classList.add("hidden");
-  sortScreen.classList.remove("hidden");
-}
-
-function showResultScreen(){
-  sortScreen.classList.add("hidden");
-  setupScreen.classList.add("hidden");
-  resultScreen.classList.remove("hidden");
-  resultNote.classList.remove("hidden");
-}
-
-/* ========= 比較表示 ========= */
-function renderComparison(){
-  if(finished) return;
-  if(currentIndex >= activeSongs.length) return;
-  if(order.length === 0) return;
-  if(low >= high) return;
-
-  mid = Math.floor((low + high)/2);
-  const leftSong  = activeSongs[order[mid]];
-  const rightSong = activeSongs[currentIndex];
-
-  choiceLeftBtn.textContent  = leftSong.title;
-  choiceRightBtn.textContent = rightSong.title;
-}
-
-/* ========= 次のステップに進める ========= */
-function stepSort(){
-  if(finished) return;
-
-  // すべての曲を挿入し終えたら結果へ
-  if(currentIndex >= activeSongs.length){
-    finished = true;
-    currentSortedSongs = order.map(i => activeSongs[i]);
-    showResult(currentSortedSongs);
+/* ---------- 比較表示 ---------- */
+function showComparison() {
+  if (!activeSongs.length) {
+    showResult([]);
     return;
   }
 
-  // orderが空になることは基本的にないが念のため
-  if(order.length === 0){
-    order.push(currentIndex);
-    currentIndex++;
-    updateProgress();
-    stepSort();
+  // 全曲処理済
+  if (insertIndex >= activeSongs.length) {
+    finishSort();
     return;
   }
 
-  // 挿入位置が確定したとき
-  if(low >= high){
-    order.splice(low, 0, currentIndex);
-    currentIndex++;
+  // 最初の1曲はそのまま入れて次へ
+  if (order.length === 0) {
+    order.push(0);
+    insertIndex = 1;
     updateProgress();
-
-    // 次の曲へ
-    if(currentIndex >= activeSongs.length){
-      finished = true;
-      currentSortedSongs = order.map(i => activeSongs[i]);
-      showResult(currentSortedSongs);
-      return;
-    }else{
-      low = 0;
-      high = order.length;
-      renderComparison();
+    if (insertIndex >= activeSongs.length) {
+      finishSort();
       return;
     }
   }
 
-  // まだ比較途中 → 比較を表示
-  renderComparison();
+  if (low >= high) {
+    // 挿入位置が確定
+    order.splice(low, 0, insertIndex);
+    insertIndex++;
+    historyStack = [];
+    updateProgress();
+
+    if (insertIndex >= activeSongs.length) {
+      finishSort();
+      return;
+    }
+    low = 0;
+    high = order.length;
+  }
+
+  mid = Math.floor((low + high) / 2);
+  const leftSong  = activeSongs[order[mid]];
+  const rightSong = activeSongs[insertIndex];
+
+  choiceLeftBtn.textContent  = leftSong.title;
+  choiceRightBtn.textContent = rightSong.title;
+
+  updateProgress();
 }
 
-/* ========= 結果表示 ========= */
-function showResult(sortedSongs){
-  showResultScreen();
+/* ---------- ソート終了 ---------- */
+function finishSort() {
+  currentSortedSongs = order.map(i => activeSongs[i]);
+  showResult(currentSortedSongs);
+}
+
+/* ---------- 結果表示 ---------- */
+function showResult(sortedSongs) {
+  sortScreen.classList.add("hidden");
+  setupScreen.classList.add("hidden");
+  resultScreen.classList.remove("hidden");
+  resultNote.classList.remove("hidden");
   resultBody.innerHTML = "";
+  progressText.textContent = "";
   progressBar.style.width = "0%";
 
-  if(!sortedSongs || !sortedSongs.length){
+  if (!sortedSongs || !sortedSongs.length) {
     const tr = document.createElement("tr");
     const td = document.createElement("td");
     td.colSpan = 2;
@@ -625,25 +667,26 @@ function showResult(sortedSongs){
     const tr = document.createElement("tr");
     tr.className = "song-row";
 
-    const rankTd = document.createElement("td");
-    rankTd.className = "rank";
-    rankTd.textContent = (index + 1) + "位";
+    const tdRank = document.createElement("td");
+    tdRank.className = "rank-cell";
+    tdRank.textContent = `${index + 1}位`;
 
-    const songTd = document.createElement("td");
-    const mainDiv = document.createElement("div");
-    mainDiv.className = "song-main";
-    mainDiv.textContent = song.title;
+    const tdTitle = document.createElement("td");
+    const titleDiv = document.createElement("div");
+    titleDiv.className = "title-main";
+    titleDiv.textContent = song.title;
     const subDiv = document.createElement("div");
-    subDiv.className = "song-sub";
+    subDiv.className = "title-sub";
     subDiv.textContent = song.recording || "";
-    songTd.appendChild(mainDiv);
-    songTd.appendChild(subDiv);
 
-    tr.appendChild(rankTd);
-    tr.appendChild(songTd);
+    tdTitle.appendChild(titleDiv);
+    tdTitle.appendChild(subDiv);
+
+    tr.appendChild(tdRank);
+    tr.appendChild(tdTitle);
 
     const detailTr = document.createElement("tr");
-    detailTr.className = "detail-row";
+    detailTr.className = "detail-row hidden";
     const detailTd = document.createElement("td");
     detailTd.colSpan = 2;
     detailTd.innerHTML = `
@@ -653,10 +696,9 @@ function showResult(sortedSongs){
       <div class="credit-line"><span class="credit-label">編曲</span>${song.arranger || "-"}</div>
     `;
     detailTr.appendChild(detailTd);
-    detailTr.style.display = "none";
 
     tr.addEventListener("click", () => {
-      detailTr.style.display = (detailTr.style.display === "none") ? "table-row" : "none";
+      detailTr.classList.toggle("hidden");
     });
 
     resultBody.appendChild(tr);
@@ -667,184 +709,136 @@ function showResult(sortedSongs){
   sendLog(sortedSongs);
 }
 
-/* ========= ソート開始 ========= */
+/* ---------- ソート開始ボタン ---------- */
 startButton.addEventListener("click", () => {
   const checked = Array.from(
     document.querySelectorAll('input[name="category"]:checked')
   ).map(el => el.value);
 
-  if(!checked.length){
+  if (!checked.length) {
     alert("1つ以上カテゴリを選んでください。");
     return;
   }
 
   selectedCategories = checked;
-  activeSongs = allSongs.filter(s => checked.includes(s.category));
+  activeSongs = shuffle(allSongs.filter(s => checked.includes(s.category)));
 
-  if(!activeSongs.length){
+  if (!activeSongs.length) {
     alert("該当する曲がありません。");
     return;
   }
 
-  // シャッフルしてスタート
-  shuffle(activeSongs);
+  setupScreen.classList.add("hidden");
+  resultScreen.classList.add("hidden");
+  resultNote.classList.add("hidden");
+  sortScreen.classList.remove("hidden");
 
-  // 初期化
-  order = [];
-  historyStack = [];
-  finished = false;
-
-  // 1曲目をそのまま入れて、2曲目から比較
-  order.push(0);
-  currentIndex = 1;
-  low = 0;
-  high = order.length;
-  updateProgress();
-
-  if(activeSongs.length === 1){
-    finished = true;
-    currentSortedSongs = [activeSongs[0]];
-    showResult(currentSortedSongs);
-    return;
-  }
-
-  showSort();
-  renderComparison();
+  initSort();
+  showComparison();
 });
 
-/* ========= 比較ボタン ========= */
-function pushHistoryState(){
-  historyStack.push({
-    order: order.slice(),
-    currentIndex,
-    low,
-    high,
-    finished
-  });
-}
-
+/* ---------- 比較ボタン ---------- */
 choiceLeftBtn.addEventListener("click", () => {
-  if(finished) return;
-  if(currentIndex >= activeSongs.length) return;
-  if(low >= high) return;
-
-  pushHistoryState();
-  // 左（既存）の方が上 → 挿入位置を左側に寄せる
+  pushHistory();
   high = mid;
-  stepSort();
+  showComparison();
 });
 
 choiceRightBtn.addEventListener("click", () => {
-  if(finished) return;
-  if(currentIndex >= activeSongs.length) return;
-  if(low >= high) return;
-
-  pushHistoryState();
-  // 右（新しい曲）が上 or 同等 → 右側へ
+  pushHistory();
   low = mid + 1;
-  stepSort();
+  showComparison();
 });
 
 choiceDrawBtn.addEventListener("click", () => {
-  if(finished) return;
-  if(currentIndex >= activeSongs.length) return;
-  if(low >= high) return;
-
-  pushHistoryState();
-  // 引き分けも「右側へ寄せる」扱いで順位を決める
+  pushHistory();
   low = mid + 1;
-  stepSort();
+  showComparison();
 });
 
-/* ========= ひとつ戻る ========= */
 backButton.addEventListener("click", () => {
-  if(!historyStack.length) return;
-  const st = historyStack.pop();
-  order = st.order.slice();
-  currentIndex = st.currentIndex;
-  low = st.low;
-  high = st.high;
-  finished = st.finished;
-  showSort();
-  updateProgress();
-  renderComparison();
+  popHistory();
 });
 
-/* ========= 最初からやり直す ========= */
-function restartAll(){
+/* ---------- 最初からやり直す ---------- */
+function restartAll() {
+  sortScreen.classList.add("hidden");
+  resultScreen.classList.add("hidden");
+  resultNote.classList.add("hidden");
+  setupScreen.classList.remove("hidden");
+
   activeSongs = [];
   order = [];
-  currentIndex = 0;
+  insertIndex = 0;
   low = high = mid = 0;
-  finished = false;
   historyStack = [];
   currentSortedSongs = [];
+  selectedCategories = [];
+  progressText.textContent = "";
   progressBar.style.width = "0%";
-  showSetup();
 }
 
-restartSortBtn.addEventListener("click", restartAll);
-restartBtn.addEventListener("click", restartAll);
+restartButton.addEventListener("click", restartAll);
+restartButtonSort.addEventListener("click", restartAll);
 
-/* ========= スプシへログ送信（曲名のみ） ========= */
-function sendLog(sortedSongs){
-  if(!LOG_ENDPOINT) return;
-  if(!sortedSongs || !sortedSongs.length) return;
+/* ---------- スプシへログ送信（曲名のみ） ---------- */
+function sendLog(sortedSongs) {
+  if (!LOG_ENDPOINT) return;
+  if (!sortedSongs || !sortedSongs.length) return;
 
   const payload = {
+    timestamp: new Date().toISOString(),
     categories: selectedCategories,
     titles: sortedSongs.map(s => s.title)
   };
 
-  try{
-    fetch(LOG_ENDPOINT, {
-      method:"POST",
-      mode:"no-cors",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(payload)
-    }).catch(e => {
-      console.error("log fetch error", e);
-    });
-  }catch(e){
-    console.error("log send error", e);
-  }
+  const json = JSON.stringify(payload);
+
+  fetch(LOG_ENDPOINT, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: json
+  }).catch(err => {
+    console.error("log failed", err);
+  });
 }
 
-/* ========= 画像保存（結果のみ＋余白あり） ========= */
+/* ---------- 画像保存（結果のみ・タイトル含む・余白あり） ---------- */
 saveImageBtn.addEventListener("click", () => {
-  const target = document.getElementById("result-capture");
-  if(!target) return;
+  const captureArea = document.getElementById("result-capture");
+  if (!captureArea) return;
 
-  html2canvas(target, {
-    scale:2,
-    backgroundColor:"#ffffff"
+  html2canvas(captureArea, {
+    scale: 2,
+    backgroundColor: "#ffffff"
   }).then(canvas => {
     canvas.toBlob(blob => {
-      if(!blob) return;
+      if (!blob) return;
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "beyooooonds_sort_result.png";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "beyooooonds_sort_result.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       URL.revokeObjectURL(url);
     });
   }).catch(() => {
-    alert("画像の保存に失敗しました。ブラウザの設定などをご確認ください。");
+    alert("画像の保存に失敗しました。ブラウザの設定をご確認ください。");
   });
 });
 
-/* ========= X共有テキスト ========= */
-function buildShareText(){
-  if(!currentSortedSongs || !currentSortedSongs.length){
+/* ---------- X共有テキスト ---------- */
+function buildShareText() {
+  if (!currentSortedSongs || !currentSortedSongs.length) {
     return "BEYOOOOONDS楽曲ソート 結果\n\n（結果がありません）";
   }
   let lines = [];
   lines.push("BEYOOOOONDS楽曲ソート 結果", "");
   const n = Math.min(5, currentSortedSongs.length);
-  for(let i=0;i<n;i++){
-    lines.push((i+1) + "位 " + currentSortedSongs[i].title);
+  for (let i = 0; i < n; i++) {
+    lines.push(`${i + 1}位 ${currentSortedSongs[i].title}`);
   }
   lines.push("");
   lines.push("#ビヨ曲ソート");
@@ -852,27 +846,35 @@ function buildShareText(){
   return lines.join("\n");
 }
 
-/* ========= X共有：アプリ優先 → Webフォールバック ========= */
+/* ---------- X共有：アプリ優先 → Webフォールバック ---------- */
 shareXBtn.addEventListener("click", () => {
   const text = buildShareText();
   const encoded = encodeURIComponent(text);
+
   const appUrl = "x://post?text=" + encoded;
   const webUrl = "https://x.com/intent/post?text=" + encoded;
 
-  const start = Date.now();
-  try{
+  try {
     window.location.href = appUrl;
     setTimeout(() => {
-      const elapsed = Date.now() - start;
-      // ほとんど遷移していない＝アプリ起動してなさそう → Web版
-      if(elapsed < 900){
+      if (!document.hidden) {
         window.open(webUrl, "_blank");
       }
     }, 700);
-  }catch(e){
+  } catch (e) {
     window.open(webUrl, "_blank");
   }
 });
+
+/* ---------- ダブルタップ拡大抑制（簡易） ---------- */
+let lastTouchEnd = 0;
+document.addEventListener("touchend", function (event) {
+  const now = new Date().getTime();
+  if (now - lastTouchEnd <= 300) {
+    event.preventDefault();
+  }
+  lastTouchEnd = now;
+}, false);
 </script>
 </body>
 </html>
