@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>BEYOOOOONDS楽曲ソート</title>
+<title>BEYOOOOONDS 楽曲ソート</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- 結果画像保存用 -->
@@ -75,12 +75,6 @@ label{
 input[type="checkbox"]{
   transform:scale(1.3);
   accent-color:var(--accent);
-}
-
-.notice-top{
-  font-size:11px;
-  color:#777;
-  margin:4px 0;
 }
 
 .btn{
@@ -306,7 +300,7 @@ th, td{
 <body>
 <div class="page-wrap">
 
-  <!-- 設定画面 -->
+  <!-- ▼設定画面 -->
   <div id="setup-screen">
     <h1>BEYOOOOONDS 楽曲ソート</h1>
     <p class="subtitle">ソートに含めたいカテゴリを選んでください。</p>
@@ -318,14 +312,14 @@ th, td{
       <label><input type="checkbox" name="category" value="STAGE" checked>演劇女子部</label>
     </div>
 
-    <p class="notice-top">
-      ※当サイトは非公式のファン制作ツールです。所属・権利元とは一切関係ありません。
-    </p>
-    <p class="notice-top">
-      ※音源リリース済みでメンバーが歌唱した楽曲のみ選択対象となっております。寸劇・歌唱無しの楽曲は含まれておりません。
-    </p>
+    <!-- ソート開始ボタン -->
+    <button id="start-button" class="btn" style="margin-top:22px;">ソート開始</button>
 
-    <button id="start-button" class="btn">ソート開始</button>
+    <!-- 注意書き（ボタンの下・左揃え） -->
+    <div style="text-align:left; font-size:11px; color:#666; margin-top:16px; line-height:1.5;">
+      ※当サイトは非公式のファン制作ツールです。所属・権利元とは一切関係ありません。<br>
+      ※音源リリース済みでメンバーが歌唱した楽曲のみ選択対象となっております。寸劇・歌唱無しの楽曲は含まれておりません。
+    </div>
   </div>
 
   <!-- ソート画面 -->
@@ -405,7 +399,7 @@ const allSongs = [
   {id:6,title:"都営大江戸線の六本木駅で抱きしめて",category:"UNIT",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"CHICA#TETSU",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"清水信之"},
   {id:7,title:"アツイ！",category:"BEYOOOOONDS",recording:"1stアルバム BEYOOOOOND1St",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"朝井泰生"},
   {id:8,title:"高輪ゲートウェイ駅ができる頃には",category:"UNIT",recording:"1stアルバム BEYOOOOOND1St",vocal:"CHICA#TETSU",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"清水信之"},
-  {id:9,title:"We Need a Name!",category:"UNIT",recording:"1stアルバム BEYOOOOOND1St",vocal:"SeasoningS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"前嶋康明"},
+  {id:9,title:"We Need a Name!",category:"UNIT",recording:"1stアルバム BEYOOOOOND1St",vocal:"SeasoningS",vocal:"SeasoningS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"前嶋康明"},
   {id:10,title:"そこらのやつとは同じにされたくない",category:"UNIT",recording:"1stアルバム BEYOOOOOND1St",vocal:"雨ノ森 川海",lyricist:"福田花音",composer:"大森靖子",arranger:"浜田ピエール裕介"},
   {id:11,title:"きのこたけのこ大戦記",category:"BEYOOOOONDS",recording:"1stアルバム BEYOOOOOND1St",vocal:"BEYOOOOONDS",lyricist:"前山田健一",composer:"前山田健一",arranger:"前山田健一 / 徳田光希"},
   {id:12,title:"恋のおスウィング",category:"BEYOOOOONDS",recording:"1stアルバム BEYOOOOOND1St",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"梅口敦史"},
@@ -534,7 +528,7 @@ let low = 0, high = 0, mid = 0;
 let historyStack = [];
 let currentSortedSongs = [];
 let selectedCategories = [];
-let current = [];
+let currentPair = [];
 
 /* ---- 一度だけ強くシャッフル（Fisher–Yates） ---- */
 function shuffleSongs(arr){
@@ -606,7 +600,6 @@ function showNextComparison(){
   if(low >= high){
     sortedOrder.splice(low,0,insertIndex);
     insertIndex++;
-    historyStack = [];
     if(insertIndex >= activeSongs.length){
       currentSortedSongs = sortedOrder.map(i => activeSongs[i]);
       showResult(currentSortedSongs);
@@ -620,7 +613,7 @@ function showNextComparison(){
   const leftSong  = activeSongs[sortedOrder[mid]]; // 既に並んでいる曲
   const rightSong = activeSongs[insertIndex];      // 今挿入中の曲
 
-  current = [leftSong, rightSong];
+  currentPair = [leftSong, rightSong];
 
   choiceLeftBtn.textContent  = leftSong.title;
   choiceRightBtn.textContent = rightSong.title;
@@ -713,7 +706,7 @@ startButton.addEventListener("click", () => {
     return;
   }
 
-  // ここで一度だけシャッフル
+  // 一度シャッフル
   activeSongs = shuffleSongs(filtered);
 
   sortedOrder = [];
@@ -746,10 +739,19 @@ choiceRightBtn.addEventListener("click", () => {
   showNextComparison();
 });
 
-/* 引き分け：同じくらい → 既存のすぐ後ろに入るイメージ */
+/* 引き分け：その位置付近に挿入して、次の曲へ進む */
 choiceDrawBtn.addEventListener("click", () => {
   pushHistory();
-  low = mid + 1;
+  // 今見ている既存(mid)のすぐ後ろに挿入して決着
+  sortedOrder.splice(mid + 1, 0, insertIndex);
+  insertIndex++;
+  if(insertIndex >= activeSongs.length){
+    currentSortedSongs = sortedOrder.map(i => activeSongs[i]);
+    showResult(currentSortedSongs);
+    return;
+  }
+  low = 0;
+  high = sortedOrder.length;
   showNextComparison();
 });
 
