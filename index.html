@@ -183,7 +183,16 @@
 
   /* 結果画面 */
   #result-screen.card {
-    padding: 22px 18px;
+    padding: 24px 20px;
+  }
+
+  #result-capture {
+    padding: 16px 12px 20px;
+  }
+
+  #result-capture h1 {
+    margin-bottom: 14px;
+    font-size: 19px;
   }
 
   .result-header-row {
@@ -196,7 +205,7 @@
   .result-hint {
     font-size: 11px;
     color: var(--subtext);
-    margin: 12px 0 16px;
+    margin: 12px 0 12px;
     text-align: center;
   }
 
@@ -208,11 +217,11 @@
   }
 
   th, td {
-    padding: 10px 6px;
+    padding: 12px 8px;
     border-bottom: 1px solid var(--border);
     vertical-align: top;
     text-align: center;
-    line-height: 1.55;
+    line-height: 1.7;
   }
 
   th {
@@ -238,15 +247,17 @@
     font-size: 12px;
     color: var(--subtext);
     text-align: center;
-    opacity: 0.8;
+    opacity: 0.85;
   }
 
-  /* ⬇️ 行ホバー時の紫背景は消す（モバイルで残る現象防止） */
-  /* tr.song-row:hover { background: var(--accent-soft); } */
+  /* 行タップ時に色が残らないよう hover を無効に */
+  tr.song-row:hover {
+    background: transparent;
+  }
 
   tr.detail-row td {
     background: #fafaff;
-    padding: 6px;
+    padding: 8px;
   }
 
   .credit-line {
@@ -379,7 +390,7 @@
 
 <script>
 /* ========= ログ送信先（GASのURL） ========= */
-const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbxgj4c1jHX5Td0D7gAS1U2LbNAjl-4Y8f3IRTUdtfM8OUBkZpwUT-tQQCAu5S5XdDqg/exec";
+const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbx_THA9aD2hCSLygalIv20gKWjWCGNMpQ2XHZR2tvZw2sv6HrkZ5QPNSv56CmQqn3ctVw/exec";
 
 /* ========= 楽曲データ（3rdアルバム曲は除外） ========= */
 const allSongs = [
@@ -495,7 +506,7 @@ const allSongs = [
   {id:115,title:"フランスレボリューション",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"}
 ];
 
-/* ========= ソート処理＆状態 ========= */
+/* ========= ソート処理＆状態（旧ロジック風・シンプル化） ========= */
 
 const setupScreen   = document.getElementById("setup-screen");
 const sortScreen    = document.getElementById("sort-screen");
@@ -524,7 +535,7 @@ let historyStack = [];
 let currentSortedSongs = [];
 let selectedCategories = [];
 
-/* ---------- 共通：履歴管理 ---------- */
+/* ---------- 履歴管理（ひとつ戻る用） ---------- */
 function pushHistory() {
   historyStack.push({
     sortedOrder: [...sortedOrder],
@@ -568,45 +579,42 @@ function initSortState() {
   updateProgress();
 }
 
-/* ---------- 比較表示メイン（旧型：1周だけの二分挿入） ---------- */
+/* ---------- 比較表示メイン（旧式：単純な挿入＋二分探索） ---------- */
 function showNextComparison() {
   if (!activeSongs.length) {
     showResult([]);
     return;
   }
 
-  // すべての曲の挿入が終わったら結果へ
+  // すべての曲を挿入し終えたら結果へ
   if (insertIndex >= activeSongs.length) {
-    updateProgress();
-    currentSortedSongs = sortedOrder.map(i => activeSongs[i]);
-    showResult(currentSortedSongs);
+    const result = sortedOrder.map(i => activeSongs[i]);
+    showResult(result);
     return;
   }
 
-  // 最初の1曲はそのままソート済みに入れる
+  // 最初の1曲はそのまま確定
   if (sortedOrder.length === 0) {
     sortedOrder.push(insertIndex);
     insertIndex++;
-    low = 0;
-    high = sortedOrder.length;
     updateProgress();
     showNextComparison();
     return;
   }
 
-  // 挿入位置が決まったら挿入して次の曲へ
+  // 挿入位置が確定したら、配列に挿入して次の曲へ
   if (low >= high) {
     sortedOrder.splice(low, 0, insertIndex);
     insertIndex++;
     low = 0;
     high = sortedOrder.length;
-    historyStack = []; // 曲をまたいだ戻るはリセット（比較単位で戻る）
+    historyStack = []; // ひとつの曲を入れ終わったら履歴クリア
     updateProgress();
     showNextComparison();
     return;
   }
 
-  // 二分探索で比較位置を決める
+  // 比較対象インデックス
   mid = Math.floor((low + high) / 2);
   const leftSong  = activeSongs[sortedOrder[mid]];
   const rightSong = activeSongs[insertIndex];
@@ -626,6 +634,8 @@ function showResult(sortedSongs) {
   resultBody.innerHTML = "";
   progressText.textContent = "";
   progressBar.style.width = "0%";
+
+  currentSortedSongs = sortedSongs ? [...sortedSongs] : [];
 
   if (!sortedSongs || !sortedSongs.length) {
     const tr = document.createElement("tr");
@@ -714,18 +724,21 @@ startButton.addEventListener("click", () => {
 /* ---------- 比較ボタン ---------- */
 choiceLeftBtn.addEventListener("click", () => {
   pushHistory();
+  // 左（既存側）を優先 → 挿入位置は左側
   high = mid;
   showNextComparison();
 });
 
 choiceRightBtn.addEventListener("click", () => {
   pushHistory();
+  // 右（新曲側）を優先 → 挿入位置を右寄りに
   low = mid + 1;
   showNextComparison();
 });
 
 choiceDrawBtn.addEventListener("click", () => {
   pushHistory();
+  // 引き分けも「右曲を同じか少し下」に入れる扱いで right 優先と同じ動き
   low = mid + 1;
   showNextComparison();
 });
@@ -740,6 +753,7 @@ function restartAll() {
   resultScreen.classList.add("hidden");
   resultNote.classList.add("hidden");
   setupScreen.classList.remove("hidden");
+
   activeSongs = [];
   sortedOrder = [];
   insertIndex = 0;
@@ -753,7 +767,7 @@ function restartAll() {
 restartButton.addEventListener("click", restartAll);
 restartButtonSort.addEventListener("click", restartAll);
 
-/* ---------- スプシへログ送信（曲名のみ・旧方式のfetch） ---------- */
+/* ---------- スプシへログ送信（曲名のみ / Beacon＋fetch） ---------- */
 function sendLog(sortedSongs) {
   if (!LOG_ENDPOINT) return;
   if (!sortedSongs || !sortedSongs.length) return;
@@ -762,12 +776,23 @@ function sendLog(sortedSongs) {
     categories: selectedCategories,
     titles: sortedSongs.map(s => s.title) // 曲名のみ
   };
+  const json = JSON.stringify(payload);
+
+  try {
+    if (navigator.sendBeacon) {
+      const blob = new Blob([json], { type: "application/json" });
+      const ok = navigator.sendBeacon(LOG_ENDPOINT, blob);
+      if (ok) return;
+    }
+  } catch (e) {
+    console.error("sendBeacon error", e);
+  }
 
   fetch(LOG_ENDPOINT, {
     method: "POST",
     mode: "no-cors",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
+    body: json
   }).catch(err => {
     console.error("log failed", err);
   });
@@ -824,11 +849,10 @@ shareXBtn.addEventListener("click", () => {
   const webUrl = "https://x.com/intent/post?text=" + encoded;
 
   try {
-    // アプリ起動試行
     window.location.href = appUrl;
 
-    // 一定時間経ってもタブが切り替わらない＝アプリ起動してないっぽい → Web版
     setTimeout(() => {
+      // アプリに遷移していたら document.hidden が true になるケースが多い
       if (!document.hidden) {
         window.open(webUrl, "_blank");
       }
