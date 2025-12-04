@@ -4,173 +4,206 @@
 <meta charset="UTF-8">
 <title>BEYOOOOONDS 楽曲ソート</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<!-- 画像保存用 -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
-  :root {
-    --accent: #5442a8;        /* 落ち着いた紫 */
-    --accent-light: #dcd6ff;
-    --accent-soft: #f4f2ff;
-    --text: #222;
-    --subtext: #666;
-    --bg: #ffffff;
-    --card: #ffffff;
-    --border: #dfe0e6;
-  }
+:root{
+  --accent:#5442a8;
+  --accent-light:#dcd6ff;
+  --accent-soft:#f4f2ff;
+  --text:#222;
+  --subtext:#666;
+  --bg:#ffffff;
+  --border:#dfe0e6;
+}
+*{
+  box-sizing:border-box;
+  -webkit-touch-callout:none;
+  -webkit-user-select:none;
+  touch-action:manipulation;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);
+  margin:0;
+  padding:18px 12px 50px;
+  color:var(--text);
+  text-align:center;
+}
+.page-wrap{max-width:560px;margin:0 auto;}
+h1{font-size:22px;font-weight:800;margin-bottom:4px;}
+.subtitle{font-size:13px;color:var(--subtext);margin-bottom:18px;}
 
-  * {
-    box-sizing:border-box;
-    -webkit-touch-callout:none;
-    -webkit-user-select:none;
-    touch-action: manipulation; /* ⬅拡大防止 */
-  }
+/* TOP カテゴリ */
+.checkbox-group{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  margin-top:12px;
+}
+label{
+  font-size:17px;
+  font-weight:600;
+  padding:12px 14px;
+  border-radius:12px;
+  background:#fafaff;
+  border:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+input[type="checkbox"]{
+  transform:scale(1.3);
+  accent-color:var(--accent);
+}
+.btn{
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  border:none;
+  background:var(--accent);
+  color:#fff;
+  font-size:17px;
+  margin-top:20px;
+}
 
-  body {
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    background:var(--bg);
-    margin:0;
-    padding:18px 12px 50px;
-    color:var(--text);
-    text-align:center;
-  }
+/* ソート画面 */
+#sort-screen h1{margin-bottom:10px;}
 
-  .page-wrap{max-width:560px;margin:0 auto;}
+.choice-btn{
+  background:#fff;
+  border:2px solid var(--accent-light);
+  font-size:19px;
+  font-weight:700;
+  padding:16px;
+  border-radius:14px;
+  margin-bottom:12px;
+}
 
-  h1{font-size:22px;font-weight:800;margin-bottom:4px;}
-  .subtitle{font-size:13px;color:var(--subtext);margin-bottom:18px;}
+/* 引き分け＋戻る 小さく横並び */
+.sub-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:10px;
+}
+.sub-btn{
+  flex:1;
+  padding:8px 6px;
+  font-size:13px;
+  border-radius:10px;
+  background:#fff;
+  border:1px solid var(--accent-light);
+}
 
-  /* --- TOP UI（カテゴリ選択を大きく1列に）---- */
-  .checkbox-group{
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-    margin-top:12px;
-  }
+/* 進捗バー */
+.progress-wrap{margin-top:8px;margin-bottom:14px;}
+.progress-percent{font-size:12px;color:var(--subtext);}
+.progress-bar{
+  width:100%;
+  height:12px;
+  background:#e9e6ff;
+  border-radius:10px;
+  overflow:hidden;
+  margin-top:6px;
+}
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:var(--accent);
+  transition:width 0.25s;
+}
 
-  label{
-    font-size:17px;
-    font-weight:600;
-    padding:12px 14px;
-    border-radius:12px;
-    background:#fafaff;
-    border:1px solid var(--border);
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
+/* 最初から */
+.restart-small{
+  margin-top:30px;
+  font-size:13px;
+  color:var(--subtext);
+  text-decoration:underline;
+  border:none;
+  background:none;
+}
 
-  input[type="checkbox"]{
-    transform:scale(1.3);
-    accent-color:var(--accent);
-  }
+/* 結果画面 */
+.result-note{
+  font-size:11px;
+  color:var(--subtext);
+  margin-bottom:10px;
+  margin-top:0;
+}
+.result-header{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-bottom:10px;
+}
+.btn-small{
+  padding:6px 10px;
+  font-size:12px;
+  border-radius:8px;
+  background:#fff;
+  border:1px solid var(--accent-light);
+  color:var(--accent);
+}
+.result-title{
+  font-size:21px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+.tips{
+  font-size:11px;
+  color:var(--subtext);
+  margin-bottom:6px;
+}
 
-  .btn{
-    width:100%;padding:14px;border-radius:10px;border:none;
-    background:var(--accent);color:#fff;font-size:17px;margin-top:20px;
-  }
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+th{
+  font-size:11px;
+  color:var(--subtext);
+  border-bottom:1px solid var(--border);
+}
+td{
+  padding:8px;
+  border-bottom:1px solid var(--border);
+}
+tbody tr:hover{background:var(--accent-soft);}
 
-  /* ------- ソート画面 -------- */
-  #sort-screen h1{margin-bottom:10px;}
+.title-main{font-size:15px;font-weight:700;}
+.title-sub{font-size:11px;color:var(--subtext);}
+.detail-row{background:#f9f8ff;}
+.rank-cell{
+  width:40px;
+  font-size:12px;
+  font-weight:700;
+  color:var(--accent);
+}
+.credit-line{
+  font-size:11px;
+  text-align:left;
+  margin:1px 0;
+}
+.credit-label{
+  font-weight:700;
+  color:var(--accent);
+  margin-right:4px;
+}
 
-  .choice-btn{
-    background:#fff;border:2px solid var(--accent-light);
-    font-size:19px;font-weight:700;padding:16px;border-radius:14px;margin-bottom:12px;
-  }
+.hidden{display:none;}
 
-  /* ⬇引き分け・戻る  小さく横並び */
-  .sub-row{
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-    margin-top:10px;
-  }
-  .sub-btn{
-    flex:1;
-    padding:8px 6px;
-    font-size:13px;
-    border-radius:10px;
-    background:#fff;
-    border:1px solid var(--accent-light);
-  }
-
-  /* 進捗 → パーセンテージのみ + 棒グラフ */
-  .progress-wrap{margin-top:8px;margin-bottom:14px;}
-  .progress-bar{
-    width:100%;height:12px;background:#e9e6ff;
-    border-radius:10px;overflow:hidden;margin-top:6px;
-  }
-  .progress-fill{
-    height:100%;width:0%;background:var(--accent);
-    transition:width 0.25s;
-  }
-
-  /* ソート画面にも「最初から」 */
-  .restart-small{
-    margin-top:30px;font-size:13px;color:var(--subtext);
-    text-decoration:underline;
-  }
-
-  /* ------- 結果画面 ------- */
-  .result-note{
-    font-size:11px;color:var(--subtext);
-    margin-bottom:10px;margin-top:0;
-  }
-
-  /* 保存/Xボタンは上に横並び */
-  .result-header{
-    display:flex;justify-content:flex-end;gap:10px;margin-bottom:10px;
-  }
-  .btn-small{
-    padding:6px 10px;font-size:12px;border-radius:8px;
-    background:#fff;border:1px solid var(--accent-light);color:var(--accent);
-  }
-
-  .result-title{font-size:21px;font-weight:800;margin-bottom:10px;}
-
-  .tips{font-size:11px;color:var(--subtext);margin-bottom:6px;} /* NEW追加：タップで詳細を知らせる */
-
-  table{width:100%;border-collapse:collapse;font-size:13px;}
-  th{font-size:11px;color:var(--subtext);border-bottom:1px solid var(--border);}
-  td{padding:8px;border-bottom:1px solid var(--border);}
-
-  tbody tr:hover{background:var(--accent-soft);}
-
-  .title-main{font-size:15px;font-weight:700;}
-  .title-sub{font-size:11px;color:var(--subtext);}
-
-  .detail-row{background:#f9f8ff;}
-    .rank-cell{
-    width:40px;
-    font-size:12px;
-    font-weight:700;
-    color:var(--accent);
-  }
-
-  .credit-line{
-    font-size:11px;
-    text-align:left;
-    margin:1px 0;
-  }
-  .credit-label{
-    font-weight:700;
-    color:var(--accent);
-    margin-right:4px;
-  }
-
-  .hidden{display:none;}
-
-  .footer{
-    margin-top:20px;
-    font-size:11px;
-    color:var(--subtext);
-  }
-  .footer a{
-    color:var(--accent);
-    text-decoration:none;
-    font-weight:600;
-  }
+.footer{
+  margin-top:20px;
+  font-size:11px;
+  color:var(--subtext);
+}
+.footer a{
+  color:var(--accent);
+  text-decoration:none;
+  font-weight:600;
+}
 </style>
 </head>
 
@@ -251,14 +284,10 @@
 </div><!-- /page-wrap -->
 
 <script>
-/* ============================
-   ログ送信先（GASのURL）
-============================ */
+/* ===== GASロギングURL ===== */
 const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbxgj4c1jHX5Td0D7gAS1U2LbNAjl-4Y8f3IRTUdtfM8OUBkZpwUT-tQQCAu5S5XdDqg/exec";
 
-/* ============================
-   楽曲データ（3rdアルバムを除外）
-============================ */
+/* ===== 楽曲データ（3rdアルバム除外版） ===== */
 const allSongs = [
   {id:1,title:"眼鏡の男の子",category:"BEYOOOOONDS",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"大久保薫"},
   {id:2,title:"ニッポンノD・N・A！",category:"BEYOOOOONDS",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"BEYOOOOONDS",lyricist:"野沢トオル",composer:"星部ショウ",arranger:"星部ショウ"},
@@ -292,7 +321,7 @@ const allSongs = [
   {id:30,title:"GOGO大臣",category:"BEYOOOOONDS",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"BEYOOOOONDS",lyricist:"野沢トオル",composer:"星部ショウ",arranger:"田中直"},
   {id:31,title:"オンリーロンリー",category:"BEYOOOOONDS",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"星部ショウ"},
   {id:32,title:"待ち合わせはJR梅田駅で",category:"UNIT",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"CHICA#TETSU",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"星部ショウ"},
-  {id:33,title:"循環",category:"UNIT",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"雨ノ森 川海",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"大久保薫"},
+  {id:33:title:"循環",category:"UNIT",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"雨ノ森 川海",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"大久保薫"},
   {id:34,title:"Get Back！ビニール傘の大冒険",category:"UNIT",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"SeasoningS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"加藤裕介"},
   {id:35,title:"求めよ…運命の旅人算",category:"BEYOOOOONDS",recording:"4thシングル 求めよ…運命の旅人算/夢さえ描けない夜空には",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"星部ショウ"},
   {id:36,title:"夢さえ描けない夜空には",category:"BEYOOOOONDS",recording:"4thシングル 求めよ…運命の旅人算/夢さえ描けない夜空には",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"加藤裕介"},
@@ -350,7 +379,7 @@ const allSongs = [
   {id:95,title:"光と陰",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
   {id:96,title:"眠るあなた",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"原嘉宏"},
   {id:97,title:"みんなと歩こう2",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
-  {id:98:title:"夜が来て、朝が来る",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
+  {id:98,title:"夜が来て、朝が来る",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
   {id:99,title:"夢の世界",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"和田俊輔"},
   {id:100,title:"マリーのテーマ",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
   {id:101,title:"BURBOOOOONS 爆誕！",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
@@ -370,9 +399,7 @@ const allSongs = [
   {id:115,title:"フランスレボリューション",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"}
 ];
 
-/* ============================
-   ソートロジック & UI
-============================ */
+/* ===== ソート & UI ===== */
 const setupScreen   = document.getElementById("setup-screen");
 const sortScreen    = document.getElementById("sort-screen");
 const resultScreen  = document.getElementById("result-screen");
@@ -392,7 +419,6 @@ const resultBody    = document.getElementById("result-body");
 const saveImageBtn  = document.getElementById("save-image");
 const shareXBtn     = document.getElementById("share-x");
 
-// 状態
 let activeSongs = [];
 let sortedOrder = [];
 let insertIndex = 0;
@@ -401,7 +427,7 @@ let historyStack = [];
 let currentSortedSongs = [];
 let selectedCategories = [];
 
-// 履歴スタック（戻る用）
+// 履歴
 function pushHistory(){
   historyStack.push({
     sortedOrder:[...sortedOrder],
@@ -420,7 +446,7 @@ function popHistory(){
   showNextComparison();
 }
 
-// 進捗更新（％＋バー）
+// 進捗
 function updateProgress(){
   if(!activeSongs.length){
     progressPercent.textContent = "";
@@ -433,7 +459,7 @@ function updateProgress(){
   progressFill.style.width = `${percent}%`;
 }
 
-// 次の比較を表示
+// 比較を進める
 function showNextComparison(){
   if(!activeSongs.length){
     showResult([]);
@@ -545,7 +571,7 @@ function showResult(sortedSongs){
   sendLog(sortedSongs);
 }
 
-// ソート開始
+/* ソート開始 */
 startButton.addEventListener("click", () => {
   const checked = Array.from(
     document.querySelectorAll('input[name="category"]:checked')
@@ -579,50 +605,36 @@ startButton.addEventListener("click", () => {
   showNextComparison();
 });
 
-// 左
+/* 選択ボタン */
 choiceLeftBtn.addEventListener("click", () => {
   pushHistory();
   high = mid;
   showNextComparison();
 });
-
-// 右
 choiceRightBtn.addEventListener("click", () => {
   pushHistory();
   low = mid + 1;
   showNextComparison();
 });
-
-// 引き分け
 choiceDrawBtn.addEventListener("click", () => {
   pushHistory();
   low = mid + 1;
   showNextComparison();
 });
-
-// 戻る
 backButton.addEventListener("click", () => {
   popHistory();
 });
 
-// 最初から（結果画面）
-restartButton.addEventListener("click", () => {
+/* 最初から */
+function restartAll(){
   resultScreen.classList.add("hidden");
   sortScreen.classList.add("hidden");
   setupScreen.classList.remove("hidden");
-});
+}
+restartButton.addEventListener("click", restartAll);
+restartSmall.addEventListener("click", restartAll);
 
-// 最初から（ソート画面）
-restartSmall.addEventListener("click", () => {
-  sortScreen.classList.add("hidden");
-  resultScreen.classList.add("hidden");
-  setupScreen.classList.remove("hidden");
-});
-
-/* ============================
-   スプシへログ送信
-   ※ top5 は順位番号なしで上位5曲のみ
-============================ */
+/* スプシへログ送信（titles配列だけ送る） */
 function sendLog(sortedSongs){
   if(!LOG_ENDPOINT) return;
   if(!sortedSongs || !sortedSongs.length) return;
@@ -640,9 +652,7 @@ function sendLog(sortedSongs){
   }).catch(err => console.error("log failed", err));
 }
 
-/* ============================
-   画像保存（結果部分だけ）
-============================ */
+/* 画像保存：結果部分だけ */
 saveImageBtn.addEventListener("click", () => {
   const captureArea = document.getElementById("result-capture");
   if(!captureArea) return;
@@ -663,9 +673,7 @@ saveImageBtn.addEventListener("click", () => {
   });
 });
 
-/* ============================
-   X共有（アプリ優先＋Webフォールバック）
-============================ */
+/* X共有（アプリ優先→Webフォールバック） */
 function buildShareText(){
   if(!currentSortedSongs || !currentSortedSongs.length){
     return "BEYOOOOONDS楽曲ソート 結果\n\n（結果がありません）";
@@ -685,18 +693,13 @@ function buildShareText(){
 shareXBtn.addEventListener("click", () => {
   const text = buildShareText();
   const encoded = encodeURIComponent(text);
-
-  // Twitter(X)アプリ用URL
   const appUrl = "twitter://post?message=" + encoded;
   const webUrl = "https://x.com/intent/post?text=" + encoded;
 
-  const now = Date.now();
-  // アプリを試す
+  const start = Date.now();
   window.location.href = appUrl;
-
-  // 一定時間で戻ってきたらWeb版へフォールバック
   setTimeout(() => {
-    const elapsed = Date.now() - now;
+    const elapsed = Date.now() - start;
     if(elapsed < 800){
       window.location.href = webUrl;
     }
