@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>BEYOOOOONDS楽曲ソート</title>
+<title>BEYOOOOONDS 楽曲ソート</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- 結果画像保存用 -->
@@ -107,7 +107,7 @@ input[type="checkbox"]{
   color:var(--text);
 }
 
-/* 押した瞬間だけ軽く変化 */
+/* 押した瞬間だけ軽く変化（押しっぱなしで色が残らないよう:activeのみ） */
 .choice-btn:active,
 .sub-btn:active,
 button:active{
@@ -208,11 +208,13 @@ button:active{
   margin-bottom:6px;
 }
 
-/* キャプチャ時に写したくないもの用 */
+/* 画面だけに出して、画像保存時は消したい要素 */
 .no-capture{
   display:block;
 }
-#result-capture .no-capture{
+
+/* capture-mode中だけ非表示にする */
+#result-capture.capture-mode .no-capture{
   display:none !important;
 }
 
@@ -386,7 +388,7 @@ th, td{
 
 <script>
 /* ===== GASロギングURL（最新） ===== */
-const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbzefavpBKfVfjfcPyGx9n-C7Z4mBKzJDIU5DNtmrrkarOnshqJI_vzvHhjGcIGa8HOi/exec";
+const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbyPpRV-KzyQ77gGOFzN8HNzeVam1mB0zw_3oJM_3uH8MQGKjiau18kfChN6iYEhzVVC/exec";
 
 /* ===== 楽曲データ（3rdアルバムは除外） ===== */
 /* category: BEYOOOOONDS / UNIT / SOLO / STAGE */
@@ -399,7 +401,7 @@ const allSongs = [
   {id:6,title:"都営大江戸線の六本木駅で抱きしめて",category:"UNIT",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"CHICA#TETSU",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"清水信之"},
   {id:7,title:"アツイ！",category:"BEYOOOOONDS",recording:"1stアルバム BEYOOOOOND1St",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"朝井泰生"},
   {id:8,title:"高輪ゲートウェイ駅ができる頃には",category:"UNIT",recording:"1stアルバム BEYOOOOOND1St",vocal:"CHICA#TETSU",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"清水信之"},
-  {id:9,title:"We Need a Name!",category:"UNIT",recording:"1stアルバム BEYOOOOOND1St",vocal:"SeasoningS",vocal:"SeasoningS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"前嶋康明"},
+  {id:9,title:"We Need a Name!",category:"UNIT",recording:"1stアルバム BEYOOOOOND1St",vocal:"SeasoningS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"前嶋康明"},
   {id:10,title:"そこらのやつとは同じにされたくない",category:"UNIT",recording:"1stアルバム BEYOOOOOND1St",vocal:"雨ノ森 川海",lyricist:"福田花音",composer:"大森靖子",arranger:"浜田ピエール裕介"},
   {id:11,title:"きのこたけのこ大戦記",category:"BEYOOOOONDS",recording:"1stアルバム BEYOOOOOND1St",vocal:"BEYOOOOONDS",lyricist:"前山田健一",composer:"前山田健一",arranger:"前山田健一 / 徳田光希"},
   {id:12,title:"恋のおスウィング",category:"BEYOOOOONDS",recording:"1stアルバム BEYOOOOOND1St",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"梅口敦史"},
@@ -615,8 +617,17 @@ function showNextComparison(){
 
   currentPair = [leftSong, rightSong];
 
-  choiceLeftBtn.textContent  = leftSong.title;
-  choiceRightBtn.textContent = rightSong.title;
+  // 左右の表示順はたまに入れ替える（体感シャッフル強化）
+  if(Math.random() < 0.5){
+    choiceLeftBtn.textContent  = leftSong.title;
+    choiceRightBtn.textContent = rightSong.title;
+  }else{
+    choiceLeftBtn.textContent  = rightSong.title;
+    choiceRightBtn.textContent = leftSong.title;
+    // ただしアルゴリズム上は
+    // leftSong = sortedOrder[mid], rightSong = insertIndex
+    // として扱う（比較の意味がブレないようにする）
+  }
 
   updateProgress();
 }
@@ -726,21 +737,24 @@ startButton.addEventListener("click", () => {
 
 /* ---- 選択ボタン（左右＋引き分け） ---- */
 choiceLeftBtn.addEventListener("click", () => {
+  if(!activeSongs.length) return;
   pushHistory();
-  // 左＝既存の曲が好み → 挿入候補はもっと下に
+  // 基本ロジック：左 ＝ 既存の曲が好み → 挿入候補はもっと下に
   low = mid + 1;
   showNextComparison();
 });
 
 choiceRightBtn.addEventListener("click", () => {
+  if(!activeSongs.length) return;
   pushHistory();
-  // 右＝新しい曲が好み → もっと上に
+  // 右 ＝ 新しい曲が好み → もっと上に
   high = mid;
   showNextComparison();
 });
 
 /* 引き分け：その位置付近に挿入して、次の曲へ進む */
 choiceDrawBtn.addEventListener("click", () => {
+  if(!activeSongs.length) return;
   pushHistory();
   // 今見ている既存(mid)のすぐ後ろに挿入して決着
   sortedOrder.splice(mid + 1, 0, insertIndex);
@@ -775,22 +789,28 @@ function sendLog(sortedSongs){
   if(!sortedSongs || !sortedSongs.length) return;
 
   const payload = {
-    categories: selectedCategories,
-    titles: sortedSongs.map(s => String(s.title))
+    categories: selectedCategories,                            // 選んだカテゴリ
+    allResults: sortedSongs.map(s => String(s.title)),         // 全部の順位
+    top1: sortedSongs[0] ? String(sortedSongs[0].title) : "",  // 1位
+    top5: sortedSongs.slice(0, 5).map(s => String(s.title))    // TOP5
   };
 
   fetch(LOG_ENDPOINT, {
-    method:"POST",
-    mode:"no-cors",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(payload)
-  }).catch(err => console.error("log failed", err));
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  }).catch(err => {
+    console.error("log failed", err);
+  });
 }
 
 /* ---- 結果画像保存（注意書きなどはno-captureで非表示） ---- */
 saveImageBtn.addEventListener("click", () => {
   const captureArea = document.getElementById("result-capture");
   if(!captureArea) return;
+
+  // 画像保存モード：no-capture要素を消す
+  captureArea.classList.add("capture-mode");
 
   html2canvas(captureArea, {
     scale:2,
@@ -805,6 +825,8 @@ saveImageBtn.addEventListener("click", () => {
     document.body.removeChild(link);
   }).catch(() => {
     alert("画像の保存に失敗しました。ブラウザの設定をご確認ください。");
+  }).finally(() => {
+    captureArea.classList.remove("capture-mode");
   });
 });
 
