@@ -388,7 +388,7 @@ th, td{
 
 <script>
 /* ===== GASロギングURL（最新） ===== */
-const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbyPpRV-KzyQ77gGOFzN8HNzeVam1mB0zw_3oJM_3uH8MQGKjiau18kfChN6iYEhzVVC/exec";
+const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbz1NyRgGCBMBfPIJ2xhDf-_dFkEGOlTlxCyoXmXMaveX4GLPccSm_rC45_vktMZ_WeH/exec";
 
 /* ===== 楽曲データ（3rdアルバムは除外） ===== */
 /* category: BEYOOOOONDS / UNIT / SOLO / STAGE */
@@ -530,9 +530,8 @@ let low = 0, high = 0, mid = 0;
 let historyStack = [];
 let currentSortedSongs = [];
 let selectedCategories = [];
-let currentPair = [];
 
-/* ---- 一度だけ強くシャッフル（Fisher–Yates） ---- */
+/* ---- シャッフル ---- */
 function shuffleSongs(arr){
   const a = [...arr];
   for(let i = a.length - 1; i > 0; i--){
@@ -582,52 +581,45 @@ function showNextComparison(){
   }
 
   if(insertIndex >= activeSongs.length){
-    currentSortedSongs = sortedOrder.map(i => activeSongs[i]);
-    showResult(currentSortedSongs);
+    const finalSorted = sortedOrder.map(i => activeSongs[i]);
+    showResult(finalSorted);
     return;
   }
 
+  // 最初の1曲はそのまま登録
   if(sortedOrder.length === 0){
     sortedOrder.push(insertIndex);
     insertIndex++;
     if(insertIndex >= activeSongs.length){
-      currentSortedSongs = sortedOrder.map(i => activeSongs[i]);
-      showResult(currentSortedSongs);
+      const finalSorted = sortedOrder.map(i => activeSongs[i]);
+      showResult(finalSorted);
       return;
     }
     low = 0;
     high = sortedOrder.length;
   }
 
+  // 二分探索が終了→挿入位置確定
   if(low >= high){
     sortedOrder.splice(low,0,insertIndex);
     insertIndex++;
     if(insertIndex >= activeSongs.length){
-      currentSortedSongs = sortedOrder.map(i => activeSongs[i]);
-      showResult(currentSortedSongs);
+      const finalSorted = sortedOrder.map(i => activeSongs[i]);
+      showResult(finalSorted);
       return;
     }
     low = 0;
     high = sortedOrder.length;
   }
 
+  // 比較対象を決定
   mid = Math.floor((low + high)/2);
-  const leftSong  = activeSongs[sortedOrder[mid]]; // 既に並んでいる曲
-  const rightSong = activeSongs[insertIndex];      // 今挿入中の曲
+  const existingSong = activeSongs[sortedOrder[mid]]; // 既に並んでいる曲
+  const newSong      = activeSongs[insertIndex];      // 挿入しようとしている曲
 
-  currentPair = [leftSong, rightSong];
-
-  // 左右の表示順はたまに入れ替える（体感シャッフル強化）
-  if(Math.random() < 0.5){
-    choiceLeftBtn.textContent  = leftSong.title;
-    choiceRightBtn.textContent = rightSong.title;
-  }else{
-    choiceLeftBtn.textContent  = rightSong.title;
-    choiceRightBtn.textContent = leftSong.title;
-    // ただしアルゴリズム上は
-    // leftSong = sortedOrder[mid], rightSong = insertIndex
-    // として扱う（比較の意味がブレないようにする）
-  }
+  // 左＝既存、右＝新曲で固定
+  choiceLeftBtn.textContent  = existingSong.title;
+  choiceRightBtn.textContent = newSong.title;
 
   updateProgress();
 }
@@ -717,8 +709,7 @@ startButton.addEventListener("click", () => {
     return;
   }
 
-  // 一度シャッフル
-  activeSongs = shuffleSongs(filtered);
+  activeSongs = shuffleSongs(filtered); // 曲自体は最初にシャッフル
 
   sortedOrder = [];
   insertIndex = 0;
@@ -738,30 +729,29 @@ startButton.addEventListener("click", () => {
 /* ---- 選択ボタン（左右＋引き分け） ---- */
 choiceLeftBtn.addEventListener("click", () => {
   if(!activeSongs.length) return;
+  // 左＝既存の曲が勝ち → 新曲はもっと下へ
   pushHistory();
-  // 基本ロジック：左 ＝ 既存の曲が好み → 挿入候補はもっと下に
   low = mid + 1;
   showNextComparison();
 });
 
 choiceRightBtn.addEventListener("click", () => {
   if(!activeSongs.length) return;
+  // 右＝新曲が勝ち → 上位に入るので high を縮める
   pushHistory();
-  // 右 ＝ 新しい曲が好み → もっと上に
   high = mid;
   showNextComparison();
 });
 
-/* 引き分け：その位置付近に挿入して、次の曲へ進む */
 choiceDrawBtn.addEventListener("click", () => {
   if(!activeSongs.length) return;
+  // 引き分け → 既存(mid)のすぐ下に挿入して次の曲へ
   pushHistory();
-  // 今見ている既存(mid)のすぐ後ろに挿入して決着
   sortedOrder.splice(mid + 1, 0, insertIndex);
   insertIndex++;
   if(insertIndex >= activeSongs.length){
-    currentSortedSongs = sortedOrder.map(i => activeSongs[i]);
-    showResult(currentSortedSongs);
+    const finalSorted = sortedOrder.map(i => activeSongs[i]);
+    showResult(finalSorted);
     return;
   }
   low = 0;
@@ -769,7 +759,7 @@ choiceDrawBtn.addEventListener("click", () => {
   showNextComparison();
 });
 
-/* ひとつ戻る */
+/* ---- ひとつ戻る ---- */
 backButton.addEventListener("click", () => {
   popHistory();
 });
@@ -789,10 +779,10 @@ function sendLog(sortedSongs){
   if(!sortedSongs || !sortedSongs.length) return;
 
   const payload = {
-    categories: selectedCategories,                            // 選んだカテゴリ
-    allResults: sortedSongs.map(s => String(s.title)),         // 全部の順位
-    top1: sortedSongs[0] ? String(sortedSongs[0].title) : "",  // 1位
-    top5: sortedSongs.slice(0, 5).map(s => String(s.title))    // TOP5
+    categories: selectedCategories,
+    allResults: sortedSongs.map(s => String(s.title)),
+    top1: sortedSongs[0] ? String(sortedSongs[0].title) : "",
+    top5: sortedSongs.slice(0, 5).map(s => String(s.title))
   };
 
   fetch(LOG_ENDPOINT, {
@@ -804,12 +794,11 @@ function sendLog(sortedSongs){
   });
 }
 
-/* ---- 結果画像保存（注意書きなどはno-captureで非表示） ---- */
+/* ---- 結果画像保存 ---- */
 saveImageBtn.addEventListener("click", () => {
   const captureArea = document.getElementById("result-capture");
   if(!captureArea) return;
 
-  // 画像保存モード：no-capture要素を消す
   captureArea.classList.add("capture-mode");
 
   html2canvas(captureArea, {
@@ -852,11 +841,9 @@ shareXBtn.addEventListener("click", () => {
   const text = lines.join("\n");
   const encoded = encodeURIComponent(text);
 
-  // アプリ優先
   const appUrl = "twitter://post?message=" + encoded;
   window.location.href = appUrl;
 
-  // アプリが無い場合のみWeb版へフォールバック
   setTimeout(() => {
     window.open("https://twitter.com/intent/tweet?text=" + encoded, "_blank");
   }, 500);
