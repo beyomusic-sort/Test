@@ -51,8 +51,8 @@
     font-size: 12px;
     color: var(--subtext);
     margin: 0 0 10px;
-    text-align: 
-}
+    text-align: center;
+  }
 
   .card {
     background: var(--card);
@@ -241,9 +241,8 @@
     opacity: 0.8;
   }
 
-  tr.song-row:hover {
-    background: var(--accent-soft);
-  }
+  /* ⬇️ 行ホバー時の紫背景は消す（モバイルで残る現象防止） */
+  /* tr.song-row:hover { background: var(--accent-soft); } */
 
   tr.detail-row td {
     background: #fafaff;
@@ -282,10 +281,11 @@
     color: var(--subtext);
     text-align: center;
   }
+
   /* トップページの注意書きだけ左揃え */
-#setup-screen .notice {
-  text-align: left;
-}
+  #setup-screen .notice {
+    text-align: left;
+  }
 </style>
 </head>
 
@@ -382,7 +382,6 @@
 const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbxgj4c1jHX5Td0D7gAS1U2LbNAjl-4Y8f3IRTUdtfM8OUBkZpwUT-tQQCAu5S5XdDqg/exec";
 
 /* ========= 楽曲データ（3rdアルバム曲は除外） ========= */
-
 const allSongs = [
   {id:1,title:"眼鏡の男の子",category:"BEYOOOOONDS",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"大久保薫"},
   {id:2,title:"ニッポンノD・N・A！",category:"BEYOOOOONDS",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"BEYOOOOONDS",lyricist:"野沢トオル",composer:"星部ショウ",arranger:"星部ショウ"},
@@ -518,15 +517,12 @@ const shareXBtn     = document.getElementById("share-x");
 
 // 状態
 let activeSongs = [];
-let baseSortedSongs = [];       // 1周目の最終結果
 let sortedOrder = [];
 let insertIndex = 0;
 let low = 0, high = 0, mid = 0;
 let historyStack = [];
 let currentSortedSongs = [];
 let selectedCategories = [];
-let refineMode = false;         // 上位10曲再ソート中かどうか
-const REFINE_TOP_N = 10;
 
 /* ---------- 共通：履歴管理 ---------- */
 function pushHistory() {
@@ -572,109 +568,45 @@ function initSortState() {
   updateProgress();
 }
 
-/* ---------- 比較表示メイン ---------- */
+/* ---------- 比較表示メイン（旧型：1周だけの二分挿入） ---------- */
 function showNextComparison() {
   if (!activeSongs.length) {
     showResult([]);
     return;
   }
 
-  // 1周分終了（refineModeかどうかで分岐）
+  // すべての曲の挿入が終わったら結果へ
   if (insertIndex >= activeSongs.length) {
+    updateProgress();
     currentSortedSongs = sortedOrder.map(i => activeSongs[i]);
-
-    if (!refineMode) {
-      // 1周目が終わったところ
-      baseSortedSongs = currentSortedSongs.slice();
-      const n = Math.min(REFINE_TOP_N, baseSortedSongs.length);
-      if (n > 1) {
-        // 上位n曲だけ再ソート開始
-        refineMode = true;
-        activeSongs = baseSortedSongs.slice(0, n);
-        initSortState();
-        showNextComparison();
-        return;
-      } else {
-        // 曲数が少なすぎるのでそのまま結果へ
-        showResult(baseSortedSongs);
-        return;
-      }
-    } else {
-      // refineMode中の1周終わり → 上位再ソート完了
-      const refinedTop = currentSortedSongs.slice();
-      const n = refinedTop.length;
-      const finalList = refinedTop.concat(baseSortedSongs.slice(n));
-      refineMode = false;
-      showResult(finalList);
-      return;
-    }
+    showResult(currentSortedSongs);
+    return;
   }
 
-  // 最初の1曲をソート済みに入れる
+  // 最初の1曲はそのままソート済みに入れる
   if (sortedOrder.length === 0) {
     sortedOrder.push(insertIndex);
     insertIndex++;
-    if (insertIndex >= activeSongs.length) {
-      currentSortedSongs = sortedOrder.map(i => activeSongs[i]);
-      if (!refineMode) {
-        baseSortedSongs = currentSortedSongs.slice();
-        const n = Math.min(REFINE_TOP_N, baseSortedSongs.length);
-        if (n > 1) {
-          refineMode = true;
-          activeSongs = baseSortedSongs.slice(0, n);
-          initSortState();
-          showNextComparison();
-          return;
-        } else {
-          showResult(baseSortedSongs);
-          return;
-        }
-      } else {
-        const refinedTop = currentSortedSongs.slice();
-        const n = refinedTop.length;
-        const finalList = refinedTop.concat(baseSortedSongs.slice(n));
-        refineMode = false;
-        showResult(finalList);
-        return;
-      }
-    }
     low = 0;
     high = sortedOrder.length;
+    updateProgress();
+    showNextComparison();
+    return;
   }
 
+  // 挿入位置が決まったら挿入して次の曲へ
   if (low >= high) {
-    // 挿入位置が決まった
     sortedOrder.splice(low, 0, insertIndex);
     insertIndex++;
-
-    if (insertIndex >= activeSongs.length) {
-      currentSortedSongs = sortedOrder.map(i => activeSongs[i]);
-      if (!refineMode) {
-        baseSortedSongs = currentSortedSongs.slice();
-        const n = Math.min(REFINE_TOP_N, baseSortedSongs.length);
-        if (n > 1) {
-          refineMode = true;
-          activeSongs = baseSortedSongs.slice(0, n);
-          initSortState();
-          showNextComparison();
-          return;
-        } else {
-          showResult(baseSortedSongs);
-          return;
-        }
-      } else {
-        const refinedTop = currentSortedSongs.slice();
-        const n = refinedTop.length;
-        const finalList = refinedTop.concat(baseSortedSongs.slice(n));
-        refineMode = false;
-        showResult(finalList);
-        return;
-      }
-    }
     low = 0;
     high = sortedOrder.length;
+    historyStack = []; // 曲をまたいだ戻るはリセット（比較単位で戻る）
+    updateProgress();
+    showNextComparison();
+    return;
   }
 
+  // 二分探索で比較位置を決める
   mid = Math.floor((low + high) / 2);
   const leftSong  = activeSongs[sortedOrder[mid]];
   const rightSong = activeSongs[insertIndex];
@@ -770,9 +702,6 @@ startButton.addEventListener("click", () => {
     return;
   }
 
-  refineMode = false;
-  baseSortedSongs = [];
-
   setupScreen.classList.add("hidden");
   resultScreen.classList.add("hidden");
   resultNote.classList.add("hidden");
@@ -811,8 +740,6 @@ function restartAll() {
   resultScreen.classList.add("hidden");
   resultNote.classList.add("hidden");
   setupScreen.classList.remove("hidden");
-  refineMode = false;
-  baseSortedSongs = [];
   activeSongs = [];
   sortedOrder = [];
   insertIndex = 0;
@@ -826,7 +753,7 @@ function restartAll() {
 restartButton.addEventListener("click", restartAll);
 restartButtonSort.addEventListener("click", restartAll);
 
-/* ---------- スプシへログ送信（曲名のみ / Beacon＋fetch） ---------- */
+/* ---------- スプシへログ送信（曲名のみ・旧方式のfetch） ---------- */
 function sendLog(sortedSongs) {
   if (!LOG_ENDPOINT) return;
   if (!sortedSongs || !sortedSongs.length) return;
@@ -835,27 +762,12 @@ function sendLog(sortedSongs) {
     categories: selectedCategories,
     titles: sortedSongs.map(s => s.title) // 曲名のみ
   };
-  const json = JSON.stringify(payload);
 
-  // まず sendBeacon を試す
-  try {
-    if (navigator.sendBeacon) {
-      const blob = new Blob([json], { type: "application/json" });
-      const ok = navigator.sendBeacon(LOG_ENDPOINT, blob);
-      if (ok) {
-        return;
-      }
-    }
-  } catch (e) {
-    console.error("sendBeacon error", e);
-  }
-
-  // ダメな場合は fetch(no-cors) フォールバック
   fetch(LOG_ENDPOINT, {
     method: "POST",
     mode: "no-cors",
     headers: { "Content-Type": "application/json" },
-    body: json
+    body: JSON.stringify(payload)
   }).catch(err => {
     console.error("log failed", err);
   });
