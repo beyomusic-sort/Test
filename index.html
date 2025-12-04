@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>BEYOOOOONDS 楽曲ソート</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- 画像保存用 -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<style>
+  :root {
+    --accent: #5b4bb5;        /* 落ち着いた紫 */
+    --accent-light: #e1ddff;
+    --accent-soft: #f6f5ff;
+    --text: #222;
+    --subtext: #666;
+    --bg: #ffffff;
+    --card: #ffffff;
+    --border: #e4e4e4;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    margin: 0;
+    padding: 16px 10px 40px;
+    color: var(--text);
+  }
+
+  .page-wrap {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 20px;
+    margin: 0 0 8px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    color: var(--subtext);
+    margin: 0 0 10px;
+    text-align: center;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 16px 14px;
+    margin: 0 auto 16px;
+    border: 1px solid var(--border);
+  }
+
+  .hidden { display: none; }
+
+  /* トップ画面 */
+  .checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 8px 10px;
+    margin-top: 4px;
+  }
+
+  label {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+  }
+
+  .btn {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+
+  .btn-secondary {
+    background: #fff;
+    color: var(--accent);
+    border: 1px solid var(--accent-light);
+  }
+
+  .btn-ghost {
+    border: none;
+    background: transparent;
+    color: var(--subtext);
+  }
+
+  /* ソート画面 */
+  .choice-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .choice-btn {
+    background: #fff;
+    border: 1px solid var(--accent-light);
+    padding: 12px 12px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+  }
+
+  .sub-buttons {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .progress-text {
+    font-size: 12px;
+    color: var(--subtext);
+    margin: 2px 0 10px;
+    text-align: center;
+  }
+
+  /* 結果画面 */
+  .result-header-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .btn-small {
+    width: auto;
+    padding-inline: 10px;
+    font-size: 12px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 4px;
+    font-size: 13px;
+  }
+
+  th, td {
+    padding: 6px 4px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    text-align: center;
+  }
+
+  th {
+    font-size: 11px;
+    color: var(--subtext);
+  }
+
+  .rank-cell {
+    width: 40px;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  .title-main {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .title-sub {
+    font-size: 11px;
+    color: var(--subtext);
+  }
+
+  tr.song-row:hover {
+    background: var(--accent-soft);
+  }
+
+  tr.detail-row td {
+    background: #fafaff;
+    padding: 6px;
+  }
+
+  .credit-line {
+    font-size: 11px;
+    margin: 1px 0;
+    text-align: left;
+  }
+
+  .credit-label {
+    font-weight: 600;
+    color: var(--accent);
+    margin-right: 4px;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 11px;
+    color: var(--subtext);
+  }
+
+  .footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .notice {
+    max-width: 520px;
+    margin: 0 auto 8px;
+    font-size: 11px;
+    color: var(--subtext);
+    text-align: center;
+  }
+</style>
+</head>
+
+<body>
+<div class="page-wrap">
+
+  <!-- 設定画面 -->
+  <div id="setup-screen" class="card">
+    <h1>BEYOOOOONDS 楽曲ソート</h1>
+    <p class="subtitle">ソートに含めたいカテゴリを選んでください。</p>
+
+    <div class="checkbox-group">
+      <label><input type="checkbox" name="category" value="BEYOOOOONDS" checked> BEYOOOOONDS</label>
+      <label><input type="checkbox" name="category" value="UNIT" checked> ユニット</label>
+      <label><input type="checkbox" name="category" value="SOLO" checked> ソロ</label>
+      <label><input type="checkbox" name="category" value="STAGE" checked> 演劇女子部</label>
+    </div>
+
+    <button id="start-button" class="btn">ソート開始</button>
+  </div>
+
+  <!-- ソート画面 -->
+  <div id="sort-screen" class="card hidden">
+    <h1>どっちが好き？</h1>
+    <div id="progress-text" class="progress-text"></div>
+
+    <div class="choice-buttons">
+      <button id="choice-left"  class="choice-btn"></button>
+      <button id="choice-right" class="choice-btn"></button>
+    </div>
+
+    <div class="sub-buttons">
+      <button id="choice-draw" class="btn btn-secondary">引き分け</button>
+      <button id="back-button"  class="btn btn-ghost">ひとつ戻る</button>
+    </div>
+  </div>
+
+  <!-- 注意書き（結果の上部・画像には写らない） -->
+  <div id="result-note" class="notice hidden">
+    ※このページを閉じると結果は表示されなくなります。必要な場合は、あらかじめ画像を保存するか共有してください。
+  </div>
+
+  <!-- 結果画面 -->
+  <div id="result-screen" class="card hidden">
+    <div class="result-header-row">
+      <button id="save-image" class="btn btn-secondary btn-small">画像保存</button>
+      <button id="share-x" class="btn btn-small">Xで共有</button>
+    </div>
+
+    <div id="result-capture">
+      <h1>BEYOOOOONDS楽曲ソート 結果</h1>
+
+      <table>
+        <thead>
+          <tr><th>順位</th><th>曲</th></tr>
+        </thead>
+        <tbody id="result-body"></tbody>
+      </table>
+    </div>
+
+    <button id="restart-button" class="btn btn-ghost" style="margin-top:10px;">最初からやり直す</button>
+  </div>
+
+  <div class="footer">
+    製作者：
+    <a href="https://x.com/beyomusicsort" target="_blank" rel="noopener noreferrer">@beyomusicsort</a>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+/* ============================
+   ログ送信先（あなたのGASのURL）
+============================ */
+const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbxgj4c1jHX5Td0D7gAS1U2LbNAjl-4Y8f3IRTUdtfM8OUBkZpwUT-tQQCAu5S5XdDqg/exec";
+
+/* ============================
+   楽曲データ（3rdアルバム曲を除く）
+============================ */
+const allSongs = [
+  {id:1,title:"眼鏡の男の子",category:"BEYOOOOONDS",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"大久保薫"},
+  {id:2,title:"ニッポンノD・N・A！",category:"BEYOOOOONDS",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"BEYOOOOONDS",lyricist:"野沢トオル",composer:"星部ショウ",arranger:"星部ショウ"},
+  {id:3,title:"Go Waist",category:"BEYOOOOONDS",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"BEYOOOOONDS",lyricist:"Henri Belolo / Victor Edward Willis / 日本語詞：児玉雨子",composer:"Jacques Moral",arranger:"大久保薫"},
+  {id:4,title:"GIRL ZONE",category:"UNIT",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"雨ノ森 川海",lyricist:"大森靖子",composer:"大森靖子",arranger:"大久保薫"},
+  {id:5,title:"文化祭実行委員長の恋",category:"BEYOOOOONDS",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"板垣祐介"},
+  {id:6,title:"都営大江戸線の六本木駅で抱きしめて",category:"UNIT",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"CHICA#TETSU",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"清水信之"},
+  {id:7,title:"アツイ！",category:"BEYOOOOONDS",recording:"1stアルバム BEYOOOOOND1St",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"朝井泰生"},
+  {id:8,title:"高輪ゲートウェイ駅ができる頃には",category:"UNIT",recording:"1stアルバム BEYOOOOOND1St",vocal:"CHICA#TETSU",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"清水信之"},
+  {id:9,title:"We Need a Name!",category:"UNIT",recording:"1stアルバム BEYOOOOOND1St",vocal:"SeasoningS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"前嶋康明"},
+  {id:10,title:"そこらのやつとは同じにされたくない",category:"UNIT",recording:"1stアルバム BEYOOOOOND1St",vocal:"雨ノ森 川海",lyricist:"福田花音",composer:"大森靖子",arranger:"浜田ピエール裕介"},
+  {id:11,title:"きのこたけのこ大戦記",category:"BEYOOOOONDS",recording:"1stアルバム BEYOOOOOND1St",vocal:"BEYOOOOONDS",lyricist:"前山田健一",composer:"前山田健一",arranger:"前山田健一 / 徳田光希"},
+  {id:12,title:"恋のおスウィング",category:"BEYOOOOONDS",recording:"1stアルバム BEYOOOOOND1St",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"梅口敦史"},
+  {id:13,title:"元年バンジージャンプ",category:"BEYOOOOONDS",recording:"1stアルバム BEYOOOOOND1St",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"星部ショウ"},
+  {id:14,title:"恋愛奉行",category:"BEYOOOOONDS",recording:"1stアルバム BEYOOOOOND1St",vocal:"BEYOOOOONDS",lyricist:"三浦徳子",composer:"星部ショウ",arranger:"大久保薫"},
+  {id:15,title:"伸びしろ～Beyond the World～",category:"BEYOOOOONDS",recording:"1stアルバム BEYOOOOOND1St",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"鈴木俊介"},
+  {id:16,title:"激辛LOVE",category:"BEYOOOOONDS",recording:"2ndシングル 激辛LOVE/Now Now Ningen/こんなハズジャナカッター！",vocal:"BEYOOOOONDS",lyricist:"Barry Blue / Paul Greedus / 日本語詞：星部ショウ",composer:"Barry Blue / Paul Greedus",arranger:"大久保薫"},
+  {id:17,title:"Now Now Ningen",category:"BEYOOOOONDS",recording:"2ndシングル 激辛LOVE/Now Now Ningen/こんなハズジャナカッター！",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"星部ショウ"},
+  {id:18,title:"ビタミンME",category:"BEYOOOOONDS",recording:"2ndシングル 激辛LOVE/Now Now Ningen/こんなハズジャナカッター！",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"板垣祐介"},
+  {id:19,title:"こんなハズジャナカッター！",category:"BEYOOOOONDS",recording:"2ndシングル 激辛LOVE/Now Now Ningen/こんなハズジャナカッター！",vocal:"BEYOOOOONDS",lyricist:"星部ショウ / 野沢トオル",composer:"星部ショウ",arranger:"星部ショウ / ストリングスアレンジ：クラッシャー木村"},
+  {id:20,title:"二年前の横浜駅西口",category:"UNIT",recording:"2ndシングル 激辛LOVE/Now Now Ningen/こんなハズジャナカッター！",vocal:"CHICA#TETSU",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"清水信之"},
+  {id:21,title:"ヤバイ恋の刃",category:"UNIT",recording:"2ndシングル 激辛LOVE/Now Now Ningen/こんなハズジャナカッター！",vocal:"雨ノ森 川海",lyricist:"野沢トオル",composer:"中谷信行",arranger:"中谷信行"},
+  {id:22,title:"ワタシと踊りなさい！",category:"UNIT",recording:"2ndシングル 激辛LOVE/Now Now Ningen/こんなハズジャナカッター！",vocal:"SeasoningS",lyricist:"星部ショウ",composer:"松浦雄太",arranger:"松浦雄太"},
+  {id:23,title:"フレフレ・エブリデイ",category:"BEYOOOOONDS",recording:"配信",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"星部ショウ"},
+  {id:24,title:"英雄～笑って！ショパン先輩～",category:"BEYOOOOONDS",recording:"3rdシングル 英雄～笑って！ショパン先輩～/ハムカツ黙示録",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"FREDERIC FRANCOIS CHOPIN",arranger:"加藤裕介 / 星部ショウ"},
+  {id:25,title:"ハムカツ黙示録",category:"BEYOOOOONDS",recording:"3rdシングル 英雄～笑って！ショパン先輩～/ハムカツ黙示録",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"星部ショウ"},
+  {id:26,title:"虎視タンタ・ターン",category:"BEYOOOOONDS",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"前山田健一",arranger:"ダンス☆マン"},
+  {id:27,title:"Hey！ビヨンダ",category:"BEYOOOOONDS",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"平井祥一郎"},
+  {id:28,title:"涙のカスタネット",category:"BEYOOOOONDS",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"板垣祐介"},
+  {id:29,title:"Never Never know～コメ派とパン派のラブウォーズ～",category:"BEYOOOOONDS",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"BEYOOOOONDS",lyricist:"ひろき(リリィさよなら。)/山崎あおい",composer:"ひろき(リリィさよなら。)/山崎あおい",arranger:"山崎あおい"},
+  {id:30,title:"GOGO大臣",category:"BEYOOOOONDS",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"BEYOOOOONDS",lyricist:"野沢トオル",composer:"星部ショウ",arranger:"田中直"},
+  {id:31,title:"オンリーロンリー",category:"BEYOOOOONDS",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"星部ショウ"},
+  {id:32,title:"待ち合わせはJR梅田駅で",category:"UNIT",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"CHICA#TETSU",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"星部ショウ"},
+  {id:33,title:"循環",category:"UNIT",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"雨ノ森 川海",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"大久保薫"},
+  {id:34,title:"Get Back！ビニール傘の大冒険",category:"UNIT",recording:"2ndアルバム BEYOOOOO2NDS",vocal:"SeasoningS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"加藤裕介"},
+  {id:35,title:"求めよ…運命の旅人算",category:"BEYOOOOONDS",recording:"4thシングル 求めよ…運命の旅人算/夢さえ描けない夜空には",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"星部ショウ"},
+  {id:36,title:"夢さえ描けない夜空には",category:"BEYOOOOONDS",recording:"4thシングル 求めよ…運命の旅人算/夢さえ描けない夜空には",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"加藤裕介"},
+  {id:37,title:"灰toダイヤモンド",category:"BEYOOOOONDS",recording:"5thシングル 灰toダイヤモンド/Go City Go/フックの法則",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"大久保薫"},
+  {id:38,title:"Go City Go",category:"BEYOOOOONDS",recording:"5thシングル 灰toダイヤモンド/Go City Go/フックの法則",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"炭竃智弘"},
+  {id:39,title:"フックの法則",category:"BEYOOOOONDS",recording:"5thシングル 灰toダイヤモンド/Go City Go/フックの法則",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"鈴木俊介"},
+  {id:40,title:"恋する銀河",category:"BEYOOOOONDS",recording:"5thシングル 灰toダイヤモンド/Go City Go/フックの法則",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"加藤裕介",arranger:"加藤裕介"},
+  {id:41,title:"WORKER讃歌",category:"BEYOOOOONDS",recording:"5thシングル 灰toダイヤモンド/Go City Go/フックの法則",vocal:"BEYOOOOONDS",lyricist:"西野蒟蒻",composer:"小松一也",arranger:"小松一也"},
+  {id:42,title:"Oh！カンターレ",category:"BEYOOOOONDS",recording:"5thシングル 灰toダイヤモンド/Go City Go/フックの法則",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"Shusui / Anders Dannvik",arranger:"Anders Dannvik / 加藤裕介"},
+  {id:43,title:"Do-Did-Done",category:"BEYOOOOONDS",recording:"6thシングル Do-Did-Done/あゝ君に転生",vocal:"BEYOOOOONDS",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"炭竃智弘"},
+  {id:44,title:"あゝ君に転生",category:"BEYOOOOONDS",recording:"6thシングル Do-Did-Done/あゝ君に転生",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"大久保薫",arranger:"大久保薫"},
+  {id:45,title:"ディスコ・カーニバル",category:"BEYOOOOONDS",recording:"6thシングル Do-Did-Done/あゝ君に転生",vocal:"BEYOOOOONDS",lyricist:"西野蒟蒻",composer:"Nicklas Eklund / Ida Pihlgren / Shun Kusakawa",arranger:"Nicklas Eklund"},
+  {id:46,title:"マイ・ファースト・ピアス",category:"BEYOOOOONDS",recording:"6thシングル Do-Did-Done/あゝ君に転生",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"星部ショウ"},
+  {id:47,title:"最KOO DE DANCE",category:"BEYOOOOONDS",recording:"コラボレーションシングル",vocal:"DJ KOO × BEYOOOOONDS",lyricist:"星部ショウ / DJ KOO",composer:"星部ショウ",arranger:"星部ショウ"},
+  /* 3rdアルバム BEYOOOOONDS 3rd の楽曲(ポジティブプログラム〜心の旗)はここでは除外 */
+  {id:55,title:"愛はまるで静電気",category:"SOLO",recording:"配信",vocal:"山﨑夢羽",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"平井祥一郎"},
+  {id:56,title:"星の羊たち",category:"SOLO",recording:"Graduation Memorial CD",vocal:"島倉りか",lyricist:"筒美京平",composer:"橋本淳",arranger:"SHUNTARO"},
+  {id:57,title:"泡沫ライラック",category:"SOLO",recording:"月刊偶像",vocal:"島倉りか",lyricist:"mido(THE BINARY)",composer:"山川恵津子",arranger:"山川恵津子"},
+  {id:58,title:"本当のわたし",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:59,title:"不思議の国のアリスたち",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:60,title:"女王のオーディション",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:61,title:"呼び名",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:62,title:"みんなライバル",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:63,title:"心を叩くよう",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:64,title:"私のフィロソフィー",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:65,title:"続いてる",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:66,title:"重い空気(ラベンダ＆ピンク)",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:67,title:"重い空気(ブルー＆オレンジ)",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:68,title:"重い空気(デイジー＆ホッピン)",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:69,title:"信じるもの～ホントのわたし",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:70,title:"わたしの主役",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:71,title:"夢じゃない",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:72,title:"アラビアン・ラプソディ",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈 / 的場英也"},
+  {id:73,title:"レッドムーン",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"和田俊輔 / 岩永真奈"},
+  {id:74,title:"最高の物語",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"和田俊輔 / 岩永真奈"},
+  {id:75,title:"悪の王",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"和田俊輔 / 庄司夏葵"},
+  {id:76,title:"月には帰らない",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:77,title:"S4",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:78,title:"どうしたらいいの",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:79,title:"親友",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:80,title:"ジラ",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:81,title:"あの頃",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:82,title:"願い",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:83,title:"幾つもの夜をかけ",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+  {id:84,title:"アラビヨーンズナイト",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"的場英也"},
+  {id:85,title:"朝が来た",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
+  {id:86,title:"始まりの光",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
+  {id:87,title:"青春を作ろう",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
+  {id:88,title:"穏やかな時に包まれて",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"原嘉宏"},
+  {id:89,title:"みんなと歩こう",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
+  {id:90,title:"眠れる森の美女の世界",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"はるきねる"},
+  {id:91,title:"永遠になればいいのに",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
+  {id:92,title:"永遠になればいいのに2",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"和田俊輔"},
+  {id:93,title:"やりなおそう",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
+  {id:94,title:"永遠になればいいのに3",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"和田俊輔"},
+  {id:95,title:"光と陰",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
+  {id:96,title:"眠るあなた",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"原嘉宏"},
+  {id:97,title:"みんなと歩こう2",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
+  {id:98,title:"夜が来て、朝が来る",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
+  {id:99,title:"夢の世界",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"和田俊輔"},
+  {id:100,title:"マリーのテーマ",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:101,title:"BURBOOOOONS 爆誕！",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:102,title:"メンバー紹介！",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:103,title:"ファーストステップ！！",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:104,title:"いじわるな二人",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:105,title:"みんなでひとつに",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:106,title:"繋がらない心",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:107,title:"君がいるから",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:108,title:"この愛をあなたに",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:109,title:"ルソーの授業",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:110,title:"やってみるんだ",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:111,title:"秘密",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:112,title:"あなたにしかできないこと",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:113,title:"なんどでも",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:114,title:"みんなのために",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
+  {id:115,title:"フランスレボリューション",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"}
+];
+
+/* ============================
+   ソート処理 & UI ロジック
+============================ */
+
+const setupScreen   = document.getElementById("setup-screen");
+const sortScreen    = document.getElementById("sort-screen");
+const resultScreen  = document.getElementById("result-screen");
+const resultNote    = document.getElementById("result-note");
+
+const startButton   = document.getElementById("start-button");
+const choiceLeftBtn = document.getElementById("choice-left");
+const choiceRightBtn= document.getElementById("choice-right");
+const choiceDrawBtn = document.getElementById("choice-draw");
+const backButton    = document.getElementById("back-button");
+const restartButton = document.getElementById("restart-button");
+const progressText  = document.getElementById("progress-text");
+const resultBody    = document.getElementById("result-body");
+const saveImageBtn  = document.getElementById("save-image");
+const shareXBtn     = document.getElementById("share-x");
+
+// 状態
+let activeSongs = [];
+let sortedOrder = [];
+let insertIndex = 0;
+let low = 0, high = 0, mid = 0;
+let historyStack = [];
+let currentSortedSongs = [];
+let selectedCategories = [];
+
+// 戻る用履歴
+function pushHistory() {
+  historyStack.push({
+    sortedOrder: [...sortedOrder],
+    insertIndex,
+    low,
+    high
+  });
+}
+
+function popHistory() {
+  if (historyStack.length === 0) return;
+  const st = historyStack.pop();
+  sortedOrder = [...st.sortedOrder];
+  insertIndex = st.insertIndex;
+  low = st.low;
+  high = st.high;
+  showNextComparison();
+}
+
+// 進捗表示（％）
+function updateProgress() {
+  if (!activeSongs.length) {
+    progressText.textContent = "";
+    return;
+  }
+  const done = Math.min(insertIndex, activeSongs.length);
+  const percent = Math.floor((done / activeSongs.length) * 100);
+  progressText.textContent = `進捗：${percent}%`;
+}
+
+// 比較表示
+function showNextComparison() {
+  if (!activeSongs.length) {
+    showResult([]);
+    return;
+  }
+
+  // 全曲挿入完了
+  if (insertIndex >= activeSongs.length) {
+    currentSortedSongs = sortedOrder.map(i => activeSongs[i]);
+    showResult(currentSortedSongs);
+    return;
+  }
+
+  // 最初の1曲をソート済みに入れる
+  if (sortedOrder.length === 0) {
+    sortedOrder.push(insertIndex);
+    insertIndex++;
+    if (insertIndex >= activeSongs.length) {
+      currentSortedSongs = sortedOrder.map(i => activeSongs[i]);
+      showResult(currentSortedSongs);
+      return;
+    }
+    low = 0;
+    high = sortedOrder.length;
+  }
+
+  if (low >= high) {
+    // 挿入位置が決まった
+    sortedOrder.splice(low, 0, insertIndex);
+    insertIndex++;
+    historyStack = [];
+    if (insertIndex >= activeSongs.length) {
+      currentSortedSongs = sortedOrder.map(i => activeSongs[i]);
+      showResult(currentSortedSongs);
+      return;
+    }
+    low = 0;
+    high = sortedOrder.length;
+  }
+
+  mid = Math.floor((low + high) / 2);
+  const leftSong  = activeSongs[sortedOrder[mid]];
+  const rightSong = activeSongs[insertIndex];
+
+  choiceLeftBtn.textContent  = leftSong.title;
+  choiceRightBtn.textContent = rightSong.title;
+
+  updateProgress();
+}
+
+// 結果表示
+function showResult(sortedSongs) {
+  sortScreen.classList.add("hidden");
+  setupScreen.classList.add("hidden");
+  resultScreen.classList.remove("hidden");
+  resultNote.classList.remove("hidden");
+  resultBody.innerHTML = "";
+  progressText.textContent = "";
+
+  if (!sortedSongs || !sortedSongs.length) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 2;
+    td.textContent = "対象曲がありません。カテゴリ設定を確認してください。";
+    tr.appendChild(td);
+    resultBody.appendChild(tr);
+    return;
+  }
+
+  sortedSongs.forEach((song, index) => {
+    const tr = document.createElement("tr");
+    tr.className = "song-row";
+
+    const tdRank = document.createElement("td");
+    tdRank.className = "rank-cell";
+    tdRank.textContent = `${index + 1}位`;
+
+    const tdTitle = document.createElement("td");
+    const titleDiv = document.createElement("div");
+    titleDiv.className = "title-main";
+    titleDiv.textContent = song.title;
+    const subDiv = document.createElement("div");
+    subDiv.className = "title-sub";
+    subDiv.textContent = song.recording || "";
+
+    tdTitle.appendChild(titleDiv);
+    tdTitle.appendChild(subDiv);
+
+    tr.appendChild(tdRank);
+    tr.appendChild(tdTitle);
+
+    const detailTr = document.createElement("tr");
+    detailTr.className = "detail-row hidden";
+    const detailTd = document.createElement("td");
+    detailTd.colSpan = 2;
+    detailTd.innerHTML = `
+      <div class="credit-line"><span class="credit-label">歌</span>${song.vocal || "-"}</div>
+      <div class="credit-line"><span class="credit-label">作詞</span>${song.lyricist || "-"}</div>
+      <div class="credit-line"><span class="credit-label">作曲</span>${song.composer || "-"}</div>
+      <div class="credit-line"><span class="credit-label">編曲</span>${song.arranger || "-"}</div>
+    `;
+    detailTr.appendChild(detailTd);
+
+    tr.addEventListener("click", () => {
+      detailTr.classList.toggle("hidden");
+    });
+
+    resultBody.appendChild(tr);
+    resultBody.appendChild(detailTr);
+  });
+
+  // ★ 結果を表示し終わったらスプシにログ送信
+  sendLog(sortedSongs);
+}
+
+// カテゴリ選択→ソート開始
+startButton.addEventListener("click", () => {
+  const checked = Array.from(
+    document.querySelectorAll('input[name="category"]:checked')
+  ).map(el => el.value);
+
+  if (!checked.length) {
+    alert("1つ以上カテゴリを選んでください。");
+    return;
+  }
+
+  selectedCategories = checked;
+
+  activeSongs = allSongs.filter(s => checked.includes(s.category));
+
+  if (!activeSongs.length) {
+    alert("該当する曲がありません。");
+    return;
+  }
+
+  sortedOrder = [];
+  insertIndex = 0;
+  low = 0;
+  high = 0;
+  historyStack = [];
+  currentSortedSongs = [];
+
+  setupScreen.classList.add("hidden");
+  resultScreen.classList.add("hidden");
+  resultNote.classList.add("hidden");
+  sortScreen.classList.remove("hidden");
+
+  progressText.textContent = "進捗：0%";
+  showNextComparison();
+});
+
+// 左が好き
+choiceLeftBtn.addEventListener("click", () => {
+  pushHistory();
+  high = mid;
+  showNextComparison();
+});
+
+// 右が好き
+choiceRightBtn.addEventListener("click", () => {
+  pushHistory();
+  low = mid + 1;
+  showNextComparison();
+});
+
+// 引き分け
+choiceDrawBtn.addEventListener("click", () => {
+  pushHistory();
+  low = mid + 1;
+  showNextComparison();
+});
+
+// ひとつ戻る
+backButton.addEventListener("click", () => {
+  popHistory();
+});
+
+// 最初から
+restartButton.addEventListener("click", () => {
+  resultScreen.classList.add("hidden");
+  sortScreen.classList.add("hidden");
+  setupScreen.classList.remove("hidden");
+  resultNote.classList.add("hidden");
+});
+
+/* ============================
+   スプシへログ送信
+============================ */
+function sendLog(sortedSongs) {
+  if (!LOG_ENDPOINT) return;
+  if (!sortedSongs || !sortedSongs.length) return;
+
+  const payload = {
+    categories: selectedCategories,
+    titles: sortedSongs.map(s => s.title)
+  };
+
+  fetch(LOG_ENDPOINT, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  }).catch(err => {
+    console.error("log failed", err);
+  });
+}
+
+/* 画像保存：結果部分だけPNG化（タイトル＋順位表のみ） */
+saveImageBtn.addEventListener("click", () => {
+  const captureArea = document.querySelector("#result-capture");
+  if (!captureArea) return;
+
+  html2canvas(captureArea, {
+    scale: 2,
+    backgroundColor: "#ffffff"
+  }).then(canvas => {
+    const dataUrl = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = "beyooooonds_sort_result.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }).catch(() => {
+    alert("画像の保存に失敗しました。ブラウザの設定をご確認ください。");
+  });
+});
+
+/* X共有テキスト作成 */
+function buildShareText() {
+  if (!currentSortedSongs || !currentSortedSongs.length) {
+    return "BEYOOOOONDS楽曲ソート 結果\n\n（結果がありません）";
+  }
+  let lines = [];
+  lines.push("BEYOOOOONDS楽曲ソート 結果", "");
+  const n = Math.min(5, currentSortedSongs.length);
+  for (let i = 0; i < n; i++) {
+    lines.push(`${i + 1}位 ${currentSortedSongs[i].title}`);
+  }
+  lines.push("");
+  lines.push("#ビヨ曲ソート");
+  lines.push("https://beyomusic-sort.github.io/1019/");
+  return lines.join("\n");
+}
+
+/* X共有ボタン：Xのポスト画面を現在のタブで開く */
+shareXBtn.addEventListener("click", () => {
+  const text = buildShareText();
+  const encoded = encodeURIComponent(text);
+  const url = "https://x.com/intent/post?text=" + encoded;
+  window.location.href = url;
+});
+</script>
+</body>
+</html>
