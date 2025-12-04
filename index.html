@@ -362,7 +362,7 @@ th, td{
 
       <!-- 画面には出すけど画像には写らない案内 -->
       <p class="tips no-capture">
-        ※曲名をタップすると、楽曲のクレジットが表示されます。
+        曲名をタップすると楽曲のクレジットが表示されます。
       </p>
 
       <table>
@@ -390,7 +390,7 @@ th, td{
 /* ===== GASロギングURL（最新） ===== */
 const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbyB2dII1ZAySyHcBaVl1zr-kVLyq3A-yEf_lLy-BULc70iyBbIotTA7q531lyaCfLTpVQ/exec";
 
-/* ===== 楽曲データ（3rdアルバム除外のまま） ===== */
+/* ===== 楽曲データ ===== */
 /* category: BEYOOOOONDS / UNIT / SOLO / STAGE */
 const allSongs = [
   {id:1,title:"眼鏡の男の子",category:"BEYOOOOONDS",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"大久保薫"},
@@ -508,7 +508,7 @@ const allSongs = [
   {id:115,title:"フランスレボリューション",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"}
 ];
 
-/* ===== 状態管理（Cuban方式アルゴリズム） ===== */
+/* ===== 状態管理（Cuban方式アルゴリズム＋戻る修正版） ===== */
 const setupScreen   = document.getElementById("setup-screen");
 const sortScreen    = document.getElementById("sort-screen");
 const resultScreen  = document.getElementById("result-screen");
@@ -571,6 +571,31 @@ function showPair(a, b){
   choiceRightBtn.textContent = b.title;
 }
 
+/* ---- 履歴のスナップショット ---- */
+function makeSnapshot(){
+  return {
+    idx,
+    low,
+    high,
+    mid,
+    candidate,
+    ranked: ranked.slice()
+  };
+}
+
+function restoreSnapshot(st){
+  idx       = st.idx;
+  low       = st.low;
+  high      = st.high;
+  mid       = st.mid;
+  candidate = st.candidate;
+  ranked    = st.ranked.slice();
+  updateProgress();
+  if(candidate && ranked[mid]){
+    showPair(candidate, ranked[mid]);
+  }
+}
+
 /* ---- 次のステップ ---- */
 function nextStep(){
   if(idx >= pool.length){
@@ -593,17 +618,6 @@ function ask(){
     return;
   }
   mid = Math.floor((low + high)/2);
-
-  historyStack.push({
-    idx,
-    low,
-    high,
-    mid,
-    candidate,
-    ranked: ranked.slice()
-  });
-  updateBackButton();
-
   const opponent = ranked[mid];
   showPair(candidate, opponent);
 }
@@ -734,48 +748,47 @@ startButton.addEventListener("click", () => {
   nextStep();
 });
 
-/* ---- 選択ボタン（Cuban方式そのまま） ---- */
+/* ---- 選択ボタン（Cuban方式＋履歴修正版） ---- */
 choiceLeftBtn.addEventListener("click", () => {
   if(!pool.length) return;
-  // 左＝candidate が勝ち → highを絞る
-  high = mid;
+  historyStack.push(makeSnapshot());   // ★選択前の状態を保存
+  high = mid;                          // 左＝candidate 勝ち
+  updateBackButton();
   ask();
 });
 
 choiceRightBtn.addEventListener("click", () => {
   if(!pool.length) return;
-  // 右＝ranked[mid] が勝ち → candidateはもっと下へ
-  low = mid + 1;
+  historyStack.push(makeSnapshot());   // ★選択前の状態を保存
+  low = mid + 1;                       // 右＝ranked[mid] 勝ち
+  updateBackButton();
   ask();
 });
 
 choiceDrawBtn.addEventListener("click", () => {
   if(!pool.length) return;
-  // 引き分け：candidateをmidのすぐ下に入れるイメージ
+  historyStack.push(makeSnapshot());   // ★選択前の状態を保存
   low = mid + 1;
-  high = mid + 1;
+  high = mid + 1;                      // 引き分けで candidate を mid の下あたりへ
+  updateBackButton();
   ask();
 });
 
 /* ---- ひとつ戻る ---- */
 backButton.addEventListener("click", () => {
   if(!historyStack.length) return;
+
   const st = historyStack.pop();
-  idx = st.idx;
-  low = st.low;
-  high = st.high;
-  mid = st.mid;
-  candidate = st.candidate;
-  ranked = st.ranked.slice();
-  updateProgress();
+  restoreSnapshot(st);
   updateBackButton();
 
-  if(ranked[mid]){
-    showPair(candidate, ranked[mid]);
-  }
+  // ソート画面を必ず表示状態に戻す
+  sortScreen.classList.remove("hidden");
+  resultScreen.classList.add("hidden");
+  setupScreen.classList.add("hidden");
 });
 
-/* ---- スプシへログ送信（Cuban方式に合わせて） ---- */
+/* ---- スプシへログ送信 ---- */
 function sendLog(sortedSongs){
   if(!LOG_ENDPOINT) return;
   if(!sortedSongs || !sortedSongs.length) return;
