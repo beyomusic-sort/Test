@@ -28,26 +28,27 @@
       color: var(--text-main);
       -webkit-text-size-adjust: 100%;
       touch-action: manipulation;
+      overflow-x: hidden; /* 横揺れ防止 */
     }
 
     .page-wrapper {
-      min-height: 100vh;
+      /* 無理に高さを伸ばさない → 余計なスクロール防止 */
     }
 
     main {
       max-width: 900px;
       margin: 0 auto;
-      padding: 16px 18px 10px;
+      padding: 12px 18px 6px;
     }
 
     #site-title {
-      margin-top: 6px;
-      margin-bottom: 8px;
+      margin-top: 4px;
+      margin-bottom: 4px;
       text-align: center;
     }
 
     #site-title h1 {
-      font-size: 1.05rem; /* 少しキュッと小さく */
+      font-size: 1.05rem; /* 少しキュッと */
       margin: 0;
       letter-spacing: 0.04em;
     }
@@ -59,22 +60,22 @@
 
     h2 {
       font-size: 0.9rem;
-      margin: 4px 0 6px;
+      margin: 4px 0 4px;
       text-align: center;
     }
 
     .card {
-      padding: 16px 0 10px;
-      margin: 4px 0 10px;
+      padding: 12px 0 8px;
+      margin: 4px 0 6px;
     }
 
     /* トップページカテゴリ */
     .category-list {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;  /* 左揃え */
-      gap: 10px;
-      margin-top: 10px;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 8px;
       width: 100%;
       max-width: 260px;
       margin-left: auto;
@@ -89,10 +90,10 @@
       border-radius: 999px;
       border: 1px solid var(--border);
       background: #fff;
-      font-size: 0.92rem;   /* ちょい強調 */
+      font-size: 0.92rem;
       font-weight: 600;
       width: 100%;
-      justify-content: flex-start; /* 左揃え */
+      justify-content: flex-start;
     }
 
     .category-item input {
@@ -103,7 +104,7 @@
     .category-note {
       font-size: 0.78rem;
       color: var(--text-sub);
-      margin-top: 4px;
+      margin-top: 3px;
       text-align: center;
     }
 
@@ -111,7 +112,7 @@
       font-size: 0.7rem;
       color: var(--text-sub);
       line-height: 1.6;
-      margin-top: 10px;
+      margin-top: 8px;
       white-space: pre-line;
     }
 
@@ -170,29 +171,38 @@
       justify-content: center;
     }
 
+    /* 「ソートをはじめる」を押しやすく */
+    #btn-start-sort {
+      min-width: 210px;
+      min-height: 42px;
+      padding: 10px 24px;
+      font-size: 0.9rem;
+    }
+
     /* ソート中画面 */
     .sort-title {
-      font-size: 0.88rem; /* 少し小さく */
-      margin-bottom: 10px;
+      font-size: 0.88rem;
+      margin-bottom: 8px;
       text-align: center;
     }
 
     .song-choice-wrapper {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-bottom: 14px;
-      margin-top: 6px;
+      gap: 14px;
+      margin-bottom: 20px;
+      margin-top: 12px;
     }
 
     .song-choice {
       padding: 12px 12px;
       border-radius: 16px;
-      background: #ffffff; /* 背景は濃くしない */
+      background: #ffffff; /* 背景は白のまま */
       cursor: pointer;
-      border: 1px solid rgba(126, 99, 199, 0.45); /* 枠線は控えめ */
+      border: 1px solid rgba(126, 99, 199, 0.3); /* 枠線 少し控えめの紫 */
       text-align: center;
       -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
 
     .song-choice-title {
@@ -213,11 +223,11 @@
     .sort-sub-btn-row {
       display: flex;
       gap: 6px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       flex-wrap: wrap;
     }
 
-    /* 引き分け / ひとつ戻る：同じデザインで薄め枠 */
+    /* 引き分け / ひとつ戻る：同じデザインで薄い枠 */
     .sort-sub-btn-row .btn-secondary {
       flex: 1;
       min-width: 0;
@@ -231,22 +241,31 @@
       text-align: center;
     }
 
-    /* 最初からやり直す：小さく・グレー・枠なし */
-    #btn-reset {
-      font-size: 0.75rem;
+    /* 最初からやり直す + トップに戻る：同じスタイル */
+    #btn-reset,
+    #btn-back-to-top {
+      font-size: 0.82rem;
+      font-weight: 600;
       color: var(--text-sub);
       background: transparent;
       border: none;
-      padding: 0;
+      padding: 2px 4px;
       min-height: 0;
     }
-    #btn-reset:active {
+    #btn-back-to-top {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #btn-reset:active,
+    #btn-back-to-top:active {
       transform: translateY(1px);
     }
 
     /* 進捗バー */
     .progress-area {
-      margin-top: 6px;
+      margin-top: 4px;
       font-size: 0.74rem;
     }
     .progress-text {
@@ -280,7 +299,7 @@
     .share-row {
       display: flex;
       gap: 6px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       flex-wrap: wrap;
       justify-content: flex-end; /* 右寄せ */
     }
@@ -302,13 +321,13 @@
       font-size: 0.96rem;
       font-weight: 700;
       text-align: left;
-      margin: 2px 0 6px;
+      margin: 2px 0 4px;
     }
 
     .result-instruction {
       font-size: 0.72rem;
       color: var(--text-sub);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .song-result-list {
@@ -318,9 +337,11 @@
     }
 
     .song-result-item {
-      padding: 6px 2px;
+      padding: 6px 0 8px;
       border-bottom: 1px solid #f1f1f5;
       cursor: pointer;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .song-result-item:last-child {
@@ -362,12 +383,14 @@
     .song-result-artist {
       font-size: 0.7rem;
       color: var(--text-sub);
+      padding-left: 1.8em; /* 曲名の位置に揃える（番号ぶんインデント） */
     }
 
     .song-result-credits {
       font-size: 0.74rem;
       color: var(--text-sub);
       margin-top: 3px;
+      padding-left: 1.8em;
       display: none;        /* タップで表示 */
       line-height: 1.4;
     }
@@ -377,19 +400,19 @@
     }
 
     .result-footer-link {
-      margin-top: 10px;
-      text-align: right;
+      margin-top: 8px;
+      text-align: center; /* 中央揃えに */
     }
 
     .result-footer-link button {
-      font-weight: 500;
-      font-size: 0.78rem;
+      font-weight: 600;
+      font-size: 0.82rem;
     }
 
     footer {
       max-width: 900px;
-      margin: 4px auto 6px;
-      padding: 0 16px;
+      margin: 4px auto 4px;
+      padding: 0 16px 4px;
       font-size: 0.74rem;
       color: var(--text-sub);
       text-align: center;
@@ -407,7 +430,7 @@
     @media (min-width: 700px) {
       .song-choice-wrapper {
         max-width: 520px;
-        margin: 8px auto 14px;
+        margin: 8px auto 18px;
       }
       .result-wrapper {
         max-width: 640px;
@@ -448,7 +471,7 @@
             </label>
           </div>
 
-          <div style="margin-top:14px;text-align:center;">
+          <div style="margin-top:12px;text-align:center;">
             <button class="btn-primary" id="btn-start-sort">ソートをはじめる</button>
           </div>
 
@@ -520,7 +543,7 @@
           </div>
 
           <div class="result-footer-link">
-            <button class="btn-ghost" id="btn-back-to-top">トップページに戻る</button>
+            <button id="btn-back-to-top">トップページに戻る</button>
           </div>
         </div>
       </section>
@@ -1473,7 +1496,7 @@
       const insertSong = getSongById(currentInsertId);
       const midSong = getSongById(midId);
 
-      // 同じ曲が比較されないようにガード（万が一重複IDが来たとき用）
+      // 同じ曲が比較されないようにガード
       if (insertSong.id === midSong.id) {
         bsLow = bsMid + 1;
         proceedBinaryStep();
@@ -1550,7 +1573,7 @@
 
         const artistEl = document.createElement("div");
         artistEl.className = "song-result-artist";
-        artistEl.textContent = "歌： " + s.artist;
+        artistEl.textContent = s.artist; // 「歌:」を付けず歌手名のみ
 
         const creditsEl = document.createElement("div");
         creditsEl.className = "song-result-credits";
@@ -1578,9 +1601,9 @@
 
     function sendResultToSheet(rankingTitles) {
       const mode = currentModeLabel || "";
-      const rankingStr = rankingTitles.join("/");  // スラッシュ区切り（タイトルのみ）
+      const rankingStr = rankingTitles.join("/");  // スラッシュ区切り
       const top1 = rankingTitles[0] || "";
-      const top5 = rankingTitles.slice(0, 5).join("/"); // スラッシュ区切り
+      const top5 = rankingTitles.slice(0, 5).join("/");
 
       const payload = {
         timestamp: new Date().toISOString(),
@@ -1624,6 +1647,23 @@
       showScreen("start");
     }
 
+    // タップ反応改善：click + touchend 両方で反応
+    function bindTap(el, handler) {
+      el.addEventListener("click", handler);
+      el.addEventListener("touchend", function(e) {
+        e.preventDefault();
+        handler();
+      }, { passive: false });
+    }
+
+    bindTap(choiceTop, handleChooseTop);
+    bindTap(choiceBottom, handleChooseBottom);
+
+    btnDraw.addEventListener("click", handleDraw);
+    btnBack.addEventListener("click", handleBack);
+    btnReset.addEventListener("click", resetAll);
+    btnBackToTop.addEventListener("click", resetAll);
+
     btnStartSort.addEventListener("click", () => {
       const selected = Array.from(categoryCheckboxes)
         .filter(cb => cb.checked)
@@ -1641,7 +1681,6 @@
       }
 
       targetSongIds = target.map(s => s.id);
-      // 重複なしでシャッフル
       insertOrder = shuffle([...new Set(targetSongIds)]);
       sortedIds = [];
       currentInsertIndex = 0;
@@ -1658,13 +1697,6 @@
       showScreen("sort");
       setupNextInsert();
     });
-
-    choiceTop.addEventListener("click", handleChooseTop);
-    choiceBottom.addEventListener("click", handleChooseBottom);
-    btnDraw.addEventListener("click", handleDraw);
-    btnBack.addEventListener("click", handleBack);
-    btnReset.addEventListener("click", resetAll);
-    btnBackToTop.addEventListener("click", resetAll);
 
     btnShareX.addEventListener("click", () => {
       const titles = Array.from(resultList.querySelectorAll(".song-result-title-text"))
