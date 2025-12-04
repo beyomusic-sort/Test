@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>BEYOOOOONDS楽曲ソート</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 
 <!-- 画像保存用 -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -20,21 +20,30 @@
     --border: #e4e4e4;
   }
 
-  * { box-sizing: border-box; }
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    touch-action: manipulation;
+  }
+
+  a, button, tr {
+    -webkit-tap-highlight-color: transparent;
+  }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: var(--bg);
-    margin: 0;
     padding: 16px 10px 40px;
-    color: var(--text);
-    -webkit-text-size-adjust: 100%;
-    touch-action: manipulation;
   }
 
   button {
     touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
+    border-radius: 10px;
   }
 
   .page-wrap {
@@ -64,7 +73,9 @@
     border: 1px solid var(--border);
   }
 
-  .hidden { display: none; }
+  .hidden {
+    display: none;
+  }
 
   /* トップ画面 */
   .checkbox-group {
@@ -157,17 +168,12 @@
   .choice-btn {
     background: #fff;
     border: 1px solid var(--accent-light);
-    padding: 10px 10px;
+    padding: 12px 12px;
     border-radius: 10px;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
-    color: var(--text);
+    color: var(--text); /* 黒文字 */
     text-align: center;
-    line-height: 1.4;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .choice-btn:active {
-    color: var(--text);
   }
 
   .sub-buttons {
@@ -207,14 +213,19 @@
     text-align: center;
   }
 
+  #result-capture {
+    padding: 16px 10px 22px;
+  }
+
   table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 4px;
+    margin-top: 8px;
     font-size: 13px;
   }
 
-  th, td {
+  th,
+  td {
     padding: 10px 6px;
     border-bottom: 1px solid var(--border);
     vertical-align: top;
@@ -239,7 +250,6 @@
     font-weight: 700;
     margin-bottom: 4px;
     text-align: center;
-    word-break: keep-all;
   }
 
   .title-sub {
@@ -249,10 +259,13 @@
     opacity: 0.85;
   }
 
-  tr.song-row {
-    -webkit-tap-highlight-color: transparent;
-  }
   tr.song-row:hover {
+    background: var(--accent-soft);
+  }
+
+  tr.song-row:focus,
+  tr.song-row:active {
+    outline: none;
     background: var(--accent-soft);
   }
 
@@ -368,7 +381,7 @@
       曲名をタップすると楽曲のクレジットが表示されます。
     </div>
 
-    <div id="result-capture" style="padding:12px 6px;">
+    <div id="result-capture">
       <h1>BEYOOOOONDS楽曲ソート 結果</h1>
 
       <table>
@@ -442,7 +455,8 @@ const allSongs = [
   {id:45,title:"ディスコ・カーニバル",category:"BEYOOOOONDS",recording:"6thシングル Do-Did-Done/あゝ君に転生",vocal:"BEYOOOOONDS",lyricist:"西野蒟蒻",composer:"Nicklas Eklund / Ida Pihlgren / Shun Kusakawa",arranger:"Nicklas Eklund"},
   {id:46,title:"マイ・ファースト・ピアス",category:"BEYOOOOONDS",recording:"6thシングル Do-Did-Done/あゝ君に転生",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"星部ショウ"},
   {id:47,title:"最KOO DE DANCE",category:"BEYOOOOONDS",recording:"コラボレーションシングル",vocal:"DJ KOO × BEYOOOOONDS",lyricist:"星部ショウ / DJ KOO",composer:"星部ショウ",arranger:"星部ショウ"},
-  /* 3rdアルバム曲は除外 */
+
+  /* 3rdアルバム曲はここでは除外 */
   {id:55,title:"愛はまるで静電気",category:"SOLO",recording:"配信",vocal:"山﨑夢羽",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"平井祥一郎"},
   {id:56,title:"星の羊たち",category:"SOLO",recording:"Graduation Memorial CD",vocal:"島倉りか",lyricist:"筒美京平",composer:"橋本淳",arranger:"SHUNTARO"},
   {id:57,title:"泡沫ライラック",category:"SOLO",recording:"月刊偶像",vocal:"島倉りか",lyricist:"mido(THE BINARY)",composer:"山川恵津子",arranger:"山川恵津子"},
@@ -506,7 +520,7 @@ const allSongs = [
   {id:115,title:"フランスレボリューション",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"}
 ];
 
-/* ========= DOM取得 ========= */
+/* ========= ソート処理＆状態（方式A：挿入ソート・線形） ========= */
 const setupScreen   = document.getElementById("setup-screen");
 const sortScreen    = document.getElementById("sort-screen");
 const resultScreen  = document.getElementById("result-screen");
@@ -525,122 +539,107 @@ const resultBody    = document.getElementById("result-body");
 const saveImageBtn  = document.getElementById("save-image");
 const shareXBtn     = document.getElementById("share-x");
 
-/* ========= ソート状態 ========= */
+// 状態
 let activeSongs = [];
-let order = [];          // activeSongs の index の並び
-let insertIndex = 0;     // 今から挿入する曲の index
-let low = 0, high = 0, mid = 0;
-let historyStack = [];
+let sortedIndices = [];   // activeSongs 上の「順位」を表す index 配列
+let currentIndex = 0;     // いま挿入しようとしている activeSongs の index
+let comparePos = 0;       // sortedIndices 上のどこと比較しているか（0 = 1位側）
+let historyStack = [];    // 戻る用の履歴
 let currentSortedSongs = [];
 let selectedCategories = [];
 
-/* ---------- ユーティリティ：シャッフル ---------- */
+/* ---------- シャッフル ---------- */
 function shuffle(array) {
-  const arr = array.slice();
-  for (let i = arr.length - 1; i > 0; i--) {
+  for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    [array[i], array[j]] = [array[j], array[i]];
   }
-  return arr;
 }
 
-/* ---------- 履歴 ---------- */
-function pushHistory() {
-  historyStack.push({
-    order: [...order],
-    insertIndex,
-    low,
-    high
-  });
-}
-
-function popHistory() {
-  if (!historyStack.length) return;
-  const st = historyStack.pop();
-  order = [...st.order];
-  insertIndex = st.insertIndex;
-  low = st.low;
-  high = st.high;
-  showComparison();
-}
-
-/* ---------- 進捗 ---------- */
-function updateProgress() {
+/* ---------- 進捗表示 ---------- */
+function updateProgressBar() {
   if (!activeSongs.length) {
     progressText.textContent = "";
     progressBar.style.width = "0%";
     return;
   }
-  const percent = Math.floor((insertIndex / activeSongs.length) * 100);
+  // currentIndex 曲目を挿入中なので、
+  // 「すでに確定済み」の曲数は currentIndex - 1
+  const total = activeSongs.length;
+  const done = Math.max(0, Math.min(currentIndex - 1, total));
+  const percent = total === 0 ? 0 : Math.floor((done / total) * 100);
   progressText.textContent = percent + "%";
   progressBar.style.width = percent + "%";
 }
 
-/* ---------- ソート初期化 ---------- */
-function initSort() {
-  order = [];
-  insertIndex = 0;
-  low = 0;
-  high = 0;
-  mid = 0;
-  historyStack = [];
-  currentSortedSongs = [];
-  updateProgress();
+/* ---------- 履歴管理 ---------- */
+function pushHistory() {
+  historyStack.push({
+    sortedIndices: [...sortedIndices],
+    currentIndex,
+    comparePos
+  });
 }
 
-/* ---------- 比較表示 ---------- */
-function showComparison() {
+function popHistory() {
+  if (historyStack.length === 0) return;
+  const st = historyStack.pop();
+  sortedIndices = [...st.sortedIndices];
+  currentIndex = st.currentIndex;
+  comparePos = st.comparePos;
+  prepareNextPair();
+}
+
+/* ---------- 比較ペアの表示 ---------- */
+function prepareNextPair() {
+  // 対象曲なし
   if (!activeSongs.length) {
     showResult([]);
     return;
   }
 
-  // 全曲処理済
-  if (insertIndex >= activeSongs.length) {
-    finishSort();
+  const total = activeSongs.length;
+
+  // 1曲しかない場合 → 比較せずそのまま結果
+  if (total === 1) {
+    sortedIndices = [0];
+    currentSortedSongs = [activeSongs[0]];
+    progressText.textContent = "100%";
+    progressBar.style.width = "100%";
+    showResult(currentSortedSongs);
     return;
   }
 
-  // 最初の1曲はそのまま入れて次へ
-  if (order.length === 0) {
-    order.push(0);
-    insertIndex = 1;
-    updateProgress();
-    if (insertIndex >= activeSongs.length) {
-      finishSort();
-      return;
-    }
+  // 初期化（まだ一度もソートしていない）
+  if (sortedIndices.length === 0) {
+    sortedIndices.push(0); // 1曲目を仮1位に
+    currentIndex = 1;      // 2曲目から挿入開始
+    comparePos = 0;
   }
 
-  if (low >= high) {
-    // 挿入位置が確定
-    order.splice(low, 0, insertIndex);
-    insertIndex++;
-    historyStack = [];
-    updateProgress();
-
-    if (insertIndex >= activeSongs.length) {
-      finishSort();
-      return;
-    }
-    low = 0;
-    high = order.length;
+  // 全曲挿入し終わったら結果表示
+  if (currentIndex >= total) {
+    const result = sortedIndices.map(i => activeSongs[i]);
+    currentSortedSongs = result;
+    progressText.textContent = "100%";
+    progressBar.style.width = "100%";
+    showResult(result);
+    return;
   }
 
-  mid = Math.floor((low + high) / 2);
-  const leftSong  = activeSongs[order[mid]];
-  const rightSong = activeSongs[insertIndex];
+  // comparePos の補正
+  if (comparePos < 0) comparePos = 0;
+  if (comparePos >= sortedIndices.length) {
+    comparePos = sortedIndices.length - 1;
+  }
+
+  const leftSong  = activeSongs[sortedIndices[comparePos]];
+  const rightSong = activeSongs[currentIndex];
 
   choiceLeftBtn.textContent  = leftSong.title;
   choiceRightBtn.textContent = rightSong.title;
 
-  updateProgress();
-}
-
-/* ---------- ソート終了 ---------- */
-function finishSort() {
-  currentSortedSongs = order.map(i => activeSongs[i]);
-  showResult(currentSortedSongs);
+  updateProgressBar();
 }
 
 /* ---------- 結果表示 ---------- */
@@ -666,6 +665,7 @@ function showResult(sortedSongs) {
   sortedSongs.forEach((song, index) => {
     const tr = document.createElement("tr");
     tr.className = "song-row";
+    tr.tabIndex = 0; // モバイルでもフォーカスできるように
 
     const tdRank = document.createElement("td");
     tdRank.className = "rank-cell";
@@ -698,6 +698,8 @@ function showResult(sortedSongs) {
     detailTr.appendChild(detailTd);
 
     tr.addEventListener("click", () => {
+      // 紫フォーカス残り対策：明示的に blur
+      tr.blur();
       detailTr.classList.toggle("hidden");
     });
 
@@ -721,46 +723,78 @@ startButton.addEventListener("click", () => {
   }
 
   selectedCategories = checked;
-  activeSongs = shuffle(allSongs.filter(s => checked.includes(s.category)));
+  activeSongs = allSongs.filter(s => checked.includes(s.category));
 
   if (!activeSongs.length) {
     alert("該当する曲がありません。");
     return;
   }
 
+  // シャッフル
+  shuffle(activeSongs);
+
+  // 状態リセット
+  sortedIndices = [];
+  currentIndex = 0;
+  comparePos = 0;
+  historyStack = [];
+  currentSortedSongs = [];
+
   setupScreen.classList.add("hidden");
   resultScreen.classList.add("hidden");
   resultNote.classList.add("hidden");
   sortScreen.classList.remove("hidden");
 
-  initSort();
-  showComparison();
+  updateProgressBar();
+  prepareNextPair();
 });
 
 /* ---------- 比較ボタン ---------- */
+// 左を選んだ = 既存の方が好き → 新曲はもっと後ろを探す
 choiceLeftBtn.addEventListener("click", () => {
   pushHistory();
-  high = mid;
-  showComparison();
+
+  if (comparePos >= sortedIndices.length - 1) {
+    // いま比較しているのが一番下の順位 → 新曲はそのさらに下（＝末尾）
+    sortedIndices.push(currentIndex);
+    currentIndex++;
+    comparePos = 0;
+  } else {
+    // まだ下に曲があるので、次の順位と比較
+    comparePos++;
+  }
+
+  prepareNextPair();
 });
 
+// 右を選んだ = 新曲の方が好き → この位置の前に挿入して確定
 choiceRightBtn.addEventListener("click", () => {
   pushHistory();
-  low = mid + 1;
-  showComparison();
+
+  sortedIndices.splice(comparePos, 0, currentIndex);
+  currentIndex++;
+  comparePos = 0;
+
+  prepareNextPair();
 });
 
+// 引き分け = ほぼ同じ → この曲のすぐ後ろに挿入して確定
 choiceDrawBtn.addEventListener("click", () => {
   pushHistory();
-  low = mid + 1;
-  showComparison();
+
+  sortedIndices.splice(comparePos + 1, 0, currentIndex);
+  currentIndex++;
+  comparePos = 0;
+
+  prepareNextPair();
 });
 
+// ひとつ戻る
 backButton.addEventListener("click", () => {
   popHistory();
 });
 
-/* ---------- 最初からやり直す ---------- */
+/* ---------- 最初からやり直す（ソート中 / 結果画面） ---------- */
 function restartAll() {
   sortScreen.classList.add("hidden");
   resultScreen.classList.add("hidden");
@@ -768,12 +802,13 @@ function restartAll() {
   setupScreen.classList.remove("hidden");
 
   activeSongs = [];
-  order = [];
-  insertIndex = 0;
-  low = high = mid = 0;
+  sortedIndices = [];
+  currentIndex = 0;
+  comparePos = 0;
   historyStack = [];
   currentSortedSongs = [];
   selectedCategories = [];
+
   progressText.textContent = "";
   progressBar.style.width = "0%";
 }
@@ -786,25 +821,29 @@ function sendLog(sortedSongs) {
   if (!LOG_ENDPOINT) return;
   if (!sortedSongs || !sortedSongs.length) return;
 
+  const titles = sortedSongs.map(s => s.title);
+
   const payload = {
     timestamp: new Date().toISOString(),
-    categories: selectedCategories,
-    titles: sortedSongs.map(s => s.title)
+    mode: selectedCategories, // 選んだカテゴリ
+    ranking: titles,          // 全順位（曲名のみ）
+    top1: titles[0] || "",
+    top5: titles.slice(0, 5)
   };
-
-  const json = JSON.stringify(payload);
 
   fetch(LOG_ENDPOINT, {
     method: "POST",
     mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: json
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
   }).catch(err => {
     console.error("log failed", err);
   });
 }
 
-/* ---------- 画像保存（結果のみ・タイトル含む・余白あり） ---------- */
+/* ---------- 画像保存（結果のみ・余白あり） ---------- */
 saveImageBtn.addEventListener("click", () => {
   const captureArea = document.getElementById("result-capture");
   if (!captureArea) return;
@@ -854,27 +893,28 @@ shareXBtn.addEventListener("click", () => {
   const appUrl = "x://post?text=" + encoded;
   const webUrl = "https://x.com/intent/post?text=" + encoded;
 
-  try {
-    window.location.href = appUrl;
-    setTimeout(() => {
-      if (!document.hidden) {
-        window.open(webUrl, "_blank");
-      }
-    }, 700);
-  } catch (e) {
+  const ua = navigator.userAgent || "";
+  const isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+  if (isIOS) {
+    try {
+      // アプリ起動を試す
+      window.location.href = appUrl;
+
+      // 起動していなさそうなら Web 版へ
+      setTimeout(() => {
+        if (!document.hidden) {
+          window.location.href = webUrl;
+        }
+      }, 800);
+    } catch (e) {
+      window.location.href = webUrl;
+    }
+  } else {
+    // iOS 以外は素直に Web 版
     window.open(webUrl, "_blank");
   }
 });
-
-/* ---------- ダブルタップ拡大抑制（簡易） ---------- */
-let lastTouchEnd = 0;
-document.addEventListener("touchend", function (event) {
-  const now = new Date().getTime();
-  if (now - lastTouchEnd <= 300) {
-    event.preventDefault();
-  }
-  lastTouchEnd = now;
-}, false);
 </script>
 </body>
 </html>
