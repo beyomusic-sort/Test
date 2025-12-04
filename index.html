@@ -362,7 +362,7 @@ th, td{
 
       <!-- 画面には出すけど画像には写らない案内 -->
       <p class="tips no-capture">
-        ※曲名をタップすると、楽曲のクレジットが表示されます。
+        ※曲名の行をタップすると、歌・作詞・作曲・編曲のクレジットが表示されます。
       </p>
 
       <table>
@@ -388,9 +388,9 @@ th, td{
 
 <script>
 /* ===== GASロギングURL（最新） ===== */
-const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbz1NyRgGCBMBfPIJ2xhDf-_dFkEGOlTlxCyoXmXMaveX4GLPccSm_rC45_vktMZ_WeH/exec";
+const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbyB2dII1ZAySyHcBaVl1zr-kVLyq3A-yEf_lLy-BULc70iyBbIotTA7q531lyaCfLTpVQ/exec";
 
-/* ===== 楽曲データ（3rdアルバムは除外） ===== */
+/* ===== 楽曲データ（3rdアルバム除外のまま） ===== */
 /* category: BEYOOOOONDS / UNIT / SOLO / STAGE */
 const allSongs = [
   {id:1,title:"眼鏡の男の子",category:"BEYOOOOONDS",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"大久保薫"},
@@ -440,9 +440,11 @@ const allSongs = [
   {id:45,title:"ディスコ・カーニバル",category:"BEYOOOOONDS",recording:"6thシングル Do-Did-Done/あゝ君に転生",vocal:"BEYOOOOONDS",lyricist:"西野蒟蒻",composer:"Nicklas Eklund / Ida Pihlgren / Shun Kusakawa",arranger:"Nicklas Eklund"},
   {id:46,title:"マイ・ファースト・ピアス",category:"BEYOOOOONDS",recording:"6thシングル Do-Did-Done/あゝ君に転生",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"星部ショウ"},
   {id:47,title:"最KOO DE DANCE",category:"BEYOOOOONDS",recording:"コラボレーションシングル",vocal:"DJ KOO × BEYOOOOONDS",lyricist:"星部ショウ / DJ KOO",composer:"星部ショウ",arranger:"星部ショウ"},
+
   {id:55,title:"愛はまるで静電気",category:"SOLO",recording:"配信",vocal:"山﨑夢羽",lyricist:"児玉雨子",composer:"星部ショウ",arranger:"平井祥一郎"},
   {id:56,title:"星の羊たち",category:"SOLO",recording:"Graduation Memorial CD",vocal:"島倉りか",lyricist:"筒美京平",composer:"橋本淳",arranger:"SHUNTARO"},
   {id:57,title:"泡沫ライラック",category:"SOLO",recording:"月刊偶像",vocal:"島倉りか",lyricist:"mido(THE BINARY)",composer:"山川恵津子",arranger:"山川恵津子"},
+
   {id:58,title:"本当のわたし",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
   {id:59,title:"不思議の国のアリスたち",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
   {id:60,title:"女王のオーディション",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
@@ -456,6 +458,7 @@ const allSongs = [
   {id:68,title:"重い空気(デイジー＆ホッピン)",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
   {id:69,title:"信じるもの～ホントのわたし",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
   {id:70,title:"わたしの主役",category:"STAGE",recording:"演劇女子部「不思議の国のアリスたち」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
+
   {id:71,title:"夢じゃない",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
   {id:72,title:"アラビアン・ラプソディ",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈 / 的場英也"},
   {id:73,title:"レッドムーン",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"和田俊輔 / 岩永真奈"},
@@ -470,6 +473,7 @@ const allSongs = [
   {id:82,title:"願い",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
   {id:83,title:"幾つもの夜をかけ",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"岩永真奈"},
   {id:84,title:"アラビヨーンズナイト",category:"STAGE",recording:"演劇女子部「アラビヨーンズナイト」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"太田善也",composer:"和田俊輔",arranger:"的場英也"},
+
   {id:85,title:"朝が来た",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
   {id:86,title:"始まりの光",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
   {id:87,title:"青春を作ろう",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
@@ -485,6 +489,7 @@ const allSongs = [
   {id:97,title:"みんなと歩こう2",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
   {id:98,title:"夜が来て、朝が来る",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"文愛実"},
   {id:99,title:"夢の世界",category:"STAGE",recording:"演劇女子部「眠れる森のビヨ」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"中島庸介",composer:"和田俊輔",arranger:"和田俊輔"},
+
   {id:100,title:"マリーのテーマ",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
   {id:101,title:"BURBOOOOONS 爆誕！",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
   {id:102,title:"メンバー紹介！",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"},
@@ -503,7 +508,7 @@ const allSongs = [
   {id:115,title:"フランスレボリューション",category:"STAGE",recording:"演劇女子部「ビヨサイユ宮殿」",vocal:"演劇女子部(BEYOOOOONDS)",lyricist:"毛利亘宏",composer:"和田俊輔",arranger:"文愛実"}
 ];
 
-/* ===== ソート & UI制御 ===== */
+/* ===== 状態管理（Cuban方式アルゴリズム） ===== */
 const setupScreen   = document.getElementById("setup-screen");
 const sortScreen    = document.getElementById("sort-screen");
 const resultScreen  = document.getElementById("result-screen");
@@ -523,13 +528,14 @@ const resultBody    = document.getElementById("result-body");
 const saveImageBtn  = document.getElementById("save-image");
 const shareXBtn     = document.getElementById("share-x");
 
-let activeSongs = [];
-let sortedOrder = [];
-let insertIndex = 0;
+let pool = [];
+let ranked = [];
+let idx = 0;
 let low = 0, high = 0, mid = 0;
+let candidate = null;
 let historyStack = [];
-let currentSortedSongs = [];
 let selectedCategories = [];
+let currentSortedSongs = [];
 
 /* ---- シャッフル ---- */
 function shuffleSongs(arr){
@@ -541,99 +547,75 @@ function shuffleSongs(arr){
   return a;
 }
 
-/* ---- 戻る用 履歴 ---- */
-function pushHistory(){
-  historyStack.push({
-    sortedOrder:[...sortedOrder],
-    insertIndex,
-    low,
-    high
-  });
-}
-function popHistory(){
-  if(!historyStack.length) return;
-  const st = historyStack.pop();
-  sortedOrder = [...st.sortedOrder];
-  insertIndex = st.insertIndex;
-  low = st.low;
-  high = st.high;
-  showNextComparison();
+/* ---- 戻るボタン状態 ---- */
+function updateBackButton(){
+  backButton.disabled = historyStack.length === 0;
 }
 
-/* ---- 進捗 ---- */
+/* ---- 進捗更新 ---- */
 function updateProgress(){
-  if(!activeSongs.length){
+  if(!pool.length){
     progressPercent.textContent = "";
     progressFill.style.width = "0%";
     return;
   }
-  const done = Math.min(insertIndex, activeSongs.length);
-  const percent = Math.floor((done / activeSongs.length) * 100);
+  const percent = Math.floor((idx / pool.length) * 100);
   progressPercent.textContent = `${percent}%`;
   progressFill.style.width = `${percent}%`;
 }
 
-/* ---- 次の比較を表示 ---- */
-function showNextComparison(){
-  if(!activeSongs.length){
-    showResult([]);
+/* ---- ペア表示（Cuban方式：左=候補, 右=ranked[mid]） ---- */
+function showPair(a, b){
+  if(!a || !b) return;
+  choiceLeftBtn.textContent = a.title;
+  choiceRightBtn.textContent = b.title;
+}
+
+/* ---- 次のステップ ---- */
+function nextStep(){
+  if(idx >= pool.length){
+    finishSort();
     return;
   }
+  candidate = pool[idx];
+  low = 0;
+  high = ranked.length;
+  ask();
+}
 
-  if(insertIndex >= activeSongs.length){
-    const finalSorted = sortedOrder.map(i => activeSongs[i]);
-    showResult(finalSorted);
-    return;
-  }
-
-  // 最初の1曲はそのまま登録
-  if(sortedOrder.length === 0){
-    sortedOrder.push(insertIndex);
-    insertIndex++;
-    if(insertIndex >= activeSongs.length){
-      const finalSorted = sortedOrder.map(i => activeSongs[i]);
-      showResult(finalSorted);
-      return;
-    }
-    low = 0;
-    high = sortedOrder.length;
-  }
-
-  // 二分探索が終了→挿入位置確定
+/* ---- 質問（比較） ---- */
+function ask(){
   if(low >= high){
-    sortedOrder.splice(low,0,insertIndex);
-    insertIndex++;
-    if(insertIndex >= activeSongs.length){
-      const finalSorted = sortedOrder.map(i => activeSongs[i]);
-      showResult(finalSorted);
-      return;
-    }
-    low = 0;
-    high = sortedOrder.length;
+    ranked.splice(low,0,candidate);
+    idx++;
+    updateProgress();
+    nextStep();
+    return;
   }
-
-  // 比較対象を決定
   mid = Math.floor((low + high)/2);
-  const existingSong = activeSongs[sortedOrder[mid]]; // 既に並んでいる曲
-  const newSong      = activeSongs[insertIndex];      // 挿入しようとしている曲
 
-  // 左＝既存、右＝新曲で固定
-  choiceLeftBtn.textContent  = existingSong.title;
-  choiceRightBtn.textContent = newSong.title;
+  historyStack.push({
+    idx,
+    low,
+    high,
+    mid,
+    candidate,
+    ranked: ranked.slice()
+  });
+  updateBackButton();
 
-  updateProgress();
+  const opponent = ranked[mid];
+  showPair(candidate, opponent);
 }
 
 /* ---- 結果表示 ---- */
-function showResult(sortedSongs){
+function finishSort(){
   sortScreen.classList.add("hidden");
   setupScreen.classList.add("hidden");
   resultScreen.classList.remove("hidden");
   resultBody.innerHTML = "";
-  progressPercent.textContent = "";
-  progressFill.style.width = "0%";
 
-  if(!sortedSongs || !sortedSongs.length){
+  if(!ranked.length){
     const tr = document.createElement("tr");
     const td = document.createElement("td");
     td.colSpan = 2;
@@ -643,9 +625,9 @@ function showResult(sortedSongs){
     return;
   }
 
-  currentSortedSongs = sortedSongs;
+  currentSortedSongs = ranked.slice();
 
-  sortedSongs.forEach((song, index) => {
+  ranked.forEach((song, index) => {
     const tr = document.createElement("tr");
     tr.className = "song-row";
 
@@ -687,8 +669,32 @@ function showResult(sortedSongs){
     resultBody.appendChild(detailTr);
   });
 
-  sendLog(sortedSongs);
+  sendLog(ranked);
 }
+
+/* ---- 最初から ---- */
+function restartAll(){
+  resultScreen.classList.add("hidden");
+  sortScreen.classList.add("hidden");
+  setupScreen.classList.remove("hidden");
+
+  pool = [];
+  ranked = [];
+  idx = 0;
+  low = 0;
+  high = 0;
+  mid = 0;
+  candidate = null;
+  historyStack = [];
+  currentSortedSongs = [];
+
+  progressPercent.textContent = "0%";
+  progressFill.style.width = "0%";
+  updateBackButton();
+}
+
+restartButton.addEventListener("click", restartAll);
+restartSmall.addEventListener("click", restartAll);
 
 /* ---- ソート開始 ---- */
 startButton.addEventListener("click", () => {
@@ -709,89 +715,93 @@ startButton.addEventListener("click", () => {
     return;
   }
 
-  activeSongs = shuffleSongs(filtered); // 曲自体は最初にシャッフル
-
-  sortedOrder = [];
-  insertIndex = 0;
-  low = 0;
-  high = 0;
+  pool = shuffleSongs(filtered);
+  ranked = [];
   historyStack = [];
-  currentSortedSongs = [];
+  idx = 0;
+  candidate = null;
+
+  // 初期：最初の1曲をランキングに入れてから開始
+  ranked.push(pool[0]);
+  idx = 1;
+  updateProgress();
+  updateBackButton();
 
   setupScreen.classList.add("hidden");
   resultScreen.classList.add("hidden");
   sortScreen.classList.remove("hidden");
 
-  updateProgress();
-  showNextComparison();
+  nextStep();
 });
 
-/* ---- 選択ボタン（左右＋引き分け） ---- */
+/* ---- 選択ボタン（Cuban方式そのまま） ---- */
 choiceLeftBtn.addEventListener("click", () => {
-  if(!activeSongs.length) return;
-  // 左＝既存の曲が勝ち → 新曲はもっと下へ
-  pushHistory();
-  low = mid + 1;
-  showNextComparison();
+  if(!pool.length) return;
+  // 左＝candidate が勝ち → highを絞る
+  high = mid;
+  ask();
 });
 
 choiceRightBtn.addEventListener("click", () => {
-  if(!activeSongs.length) return;
-  // 右＝新曲が勝ち → 上位に入るので high を縮める
-  pushHistory();
-  high = mid;
-  showNextComparison();
+  if(!pool.length) return;
+  // 右＝ranked[mid] が勝ち → candidateはもっと下へ
+  low = mid + 1;
+  ask();
 });
 
 choiceDrawBtn.addEventListener("click", () => {
-  if(!activeSongs.length) return;
-  // 引き分け → 既存(mid)のすぐ下に挿入して次の曲へ
-  pushHistory();
-  sortedOrder.splice(mid + 1, 0, insertIndex);
-  insertIndex++;
-  if(insertIndex >= activeSongs.length){
-    const finalSorted = sortedOrder.map(i => activeSongs[i]);
-    showResult(finalSorted);
-    return;
-  }
-  low = 0;
-  high = sortedOrder.length;
-  showNextComparison();
+  if(!pool.length) return;
+  // 引き分け：candidateをmidのすぐ下に入れるイメージ
+  low = mid + 1;
+  high = mid + 1;
+  ask();
 });
 
 /* ---- ひとつ戻る ---- */
 backButton.addEventListener("click", () => {
-  popHistory();
+  if(!historyStack.length) return;
+  const st = historyStack.pop();
+  idx = st.idx;
+  low = st.low;
+  high = st.high;
+  mid = st.mid;
+  candidate = st.candidate;
+  ranked = st.ranked.slice();
+  updateProgress();
+  updateBackButton();
+
+  if(ranked[mid]){
+    showPair(candidate, ranked[mid]);
+  }
 });
 
-/* ---- 最初から ---- */
-function restartAll(){
-  resultScreen.classList.add("hidden");
-  sortScreen.classList.add("hidden");
-  setupScreen.classList.remove("hidden");
-}
-restartButton.addEventListener("click", restartAll);
-restartSmall.addEventListener("click", restartAll);
-
-/* ---- スプシへログ送信 ---- */
+/* ---- スプシへログ送信（Cuban方式に合わせて） ---- */
 function sendLog(sortedSongs){
   if(!LOG_ENDPOINT) return;
   if(!sortedSongs || !sortedSongs.length) return;
 
+  const rankedStrings = sortedSongs.map(s =>
+    s.recording ? `${s.title} (${s.recording})` : s.title
+  );
+
   const payload = {
-    categories: selectedCategories,
-    allResults: sortedSongs.map(s => String(s.title)),
-    top1: sortedSongs[0] ? String(sortedSongs[0].title) : "",
-    top5: sortedSongs.slice(0, 5).map(s => String(s.title))
+    mode: selectedCategories.join(","),
+    ranked: rankedStrings,
+    ua: navigator.userAgent
   };
 
-  fetch(LOG_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  }).catch(err => {
-    console.error("log failed", err);
-  });
+  try{
+    fetch(LOG_ENDPOINT, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(payload)
+    });
+  }catch(e){
+    console.warn("log send error (ignored):", e);
+  }
 }
 
 /* ---- 結果画像保存 ---- */
