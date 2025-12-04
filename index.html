@@ -24,6 +24,7 @@
   -webkit-touch-callout:none;
   -webkit-user-select:none;
   touch-action:manipulation;
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
 }
 
 body{
@@ -48,7 +49,7 @@ h1{
 .subtitle{
   font-size:13px;
   color:var(--sub);
-  margin-bottom:18px;
+  margin-bottom:12px;
 }
 
 /* ---- TOPカテゴリ選択 ---- */
@@ -76,6 +77,12 @@ input[type="checkbox"]{
   accent-color:var(--accent);
 }
 
+.notice-top{
+  font-size:11px;
+  color:#777;
+  margin:4px 0;
+}
+
 .btn{
   width:100%;
   padding:14px;
@@ -84,7 +91,7 @@ input[type="checkbox"]{
   background:var(--accent);
   color:#fff;
   font-size:17px;
-  margin-top:20px;
+  margin-top:18px;
 }
 
 /* ---- ソート画面 ---- */
@@ -104,6 +111,14 @@ input[type="checkbox"]{
   border-radius:14px;
   margin-bottom:14px;
   color:var(--text);
+}
+
+/* 押した瞬間だけ軽く変化 */
+.choice-btn:active,
+.sub-btn:active,
+button:active{
+  background:#f2f0ff !important;
+  color:var(--text) !important;
 }
 
 /* 引き分け＆戻る 小さく横並び */
@@ -165,7 +180,7 @@ input[type="checkbox"]{
   margin-top:0;
 }
 
-/* 保存 / 共有ボタンは上部に横並び */
+/* 保存 / 共有ボタンは上部に横並び（大きく＆濃く） */
 .result-header{
   display:flex;
   justify-content:flex-end;
@@ -173,12 +188,18 @@ input[type="checkbox"]{
   margin-bottom:10px;
 }
 .btn-small{
-  padding:6px 10px;
-  font-size:12px;
-  border-radius:8px;
-  background:#fff;
-  border:1px solid var(--accent-light);
-  color:var(--accent);
+  padding:9px 14px;
+  font-size:13px;
+  border-radius:999px;
+  background:var(--accent);
+  border:none;
+  color:#fff;
+  font-weight:600;
+  box-shadow:0 2px 4px rgba(0,0,0,0.2);
+}
+.btn-small:active{
+  transform:translateY(1px);
+  box-shadow:0 1px 2px rgba(0,0,0,0.2);
 }
 
 .result-title{
@@ -218,11 +239,23 @@ th{
   border-bottom:1px solid var(--border);
 }
 td{
-  padding:12px;
+  padding:12px 8px;
   border-bottom:1px solid var(--border);
 }
-tbody tr:hover{
-  background:var(--accent-soft);
+
+/* 中央寄せ（クレジット詳細は別で左寄せ） */
+th, td{
+  text-align:center;
+}
+
+/* 順位と曲の余白強化 */
+.rank-cell{
+  width:48px;
+  font-size:12px;
+  font-weight:700;
+  color:var(--accent);
+  text-align:right;
+  padding-right:12px;
 }
 
 .title-main{
@@ -241,19 +274,12 @@ tbody tr:hover{
   background:#fafaff;
 }
 .detail-row td{
-  padding:10px;
-}
-
-.rank-cell{
-  width:40px;
-  font-size:12px;
-  font-weight:700;
-  color:var(--accent);
+  padding:10px 12px;
 }
 
 .credit-line{
   font-size:11px;
-  text-align:left;
+  text-align:left; /* 詳細だけ左寄せ */
   margin:1px 0;
 }
 .credit-label{
@@ -291,6 +317,13 @@ tbody tr:hover{
       <label><input type="checkbox" name="category" value="SOLO" checked>ソロ</label>
       <label><input type="checkbox" name="category" value="STAGE" checked>演劇女子部</label>
     </div>
+
+    <p class="notice-top">
+      ※当サイトは非公式のファン制作ツールです。所属・権利元とは一切関係ありません。
+    </p>
+    <p class="notice-top">
+      ※音源リリース済みでメンバーが歌唱した楽曲のみ選択対象となっております。寸劇・歌唱無しの楽曲は含まれておりません。
+    </p>
 
     <button id="start-button" class="btn">ソート開始</button>
   </div>
@@ -330,8 +363,11 @@ tbody tr:hover{
 
     <div id="result-capture">
       <div class="result-title">BEYOOOOONDS楽曲ソート 結果</div>
-      <!-- 画像には写さない案内 -->
-      <p class="tips no-capture">※曲名の行をタップすると、歌・作詞・作曲・編曲のクレジットが表示されます。</p>
+
+      <!-- 画面には出すけど画像には写らない案内 -->
+      <p class="tips no-capture">
+        ※曲名の行をタップすると、歌・作詞・作曲・編曲のクレジットが表示されます。
+      </p>
 
       <table>
         <thead>
@@ -355,10 +391,11 @@ tbody tr:hover{
 </div><!-- /page-wrap -->
 
 <script>
-/* ===== GASロギングURL（新しいやつ） ===== */
-const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbzusBEeXFgMNwnJRZVDPtwLoPrsnYgOgSTCME3drCeqDN4Vrm4Q4K9T0uTs5V_apLTy/exec";
+/* ===== GASロギングURL（最新） ===== */
+const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbzefavpBKfVfjfcPyGx9n-C7Z4mBKzJDIU5DNtmrrkarOnshqJI_vzvHhjGcIGa8HOi/exec";
 
 /* ===== 楽曲データ（3rdアルバムは除外） ===== */
+/* category: BEYOOOOONDS / UNIT / SOLO / STAGE */
 const allSongs = [
   {id:1,title:"眼鏡の男の子",category:"BEYOOOOONDS",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"BEYOOOOONDS",lyricist:"星部ショウ",composer:"星部ショウ",arranger:"大久保薫"},
   {id:2,title:"ニッポンノD・N・A！",category:"BEYOOOOONDS",recording:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist",vocal:"BEYOOOOONDS",lyricist:"野沢トオル",composer:"星部ショウ",arranger:"星部ショウ"},
@@ -497,6 +534,17 @@ let low = 0, high = 0, mid = 0;
 let historyStack = [];
 let currentSortedSongs = [];
 let selectedCategories = [];
+let current = [];
+
+/* ---- 一度だけ強くシャッフル（Fisher–Yates） ---- */
+function shuffleSongs(arr){
+  const a = [...arr];
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 /* ---- 戻る用 履歴 ---- */
 function pushHistory(){
@@ -572,6 +620,8 @@ function showNextComparison(){
   const leftSong  = activeSongs[sortedOrder[mid]]; // 既に並んでいる曲
   const rightSong = activeSongs[insertIndex];      // 今挿入中の曲
 
+  current = [leftSong, rightSong];
+
   choiceLeftBtn.textContent  = leftSong.title;
   choiceRightBtn.textContent = rightSong.title;
 
@@ -596,6 +646,8 @@ function showResult(sortedSongs){
     resultBody.appendChild(tr);
     return;
   }
+
+  currentSortedSongs = sortedSongs;
 
   sortedSongs.forEach((song, index) => {
     const tr = document.createElement("tr");
@@ -654,12 +706,15 @@ startButton.addEventListener("click", () => {
   }
 
   selectedCategories = checked;
-  activeSongs = allSongs.filter(s => checked.includes(s.category));
+  const filtered = allSongs.filter(s => checked.includes(s.category));
 
-  if(!activeSongs.length){
+  if(!filtered.length){
     alert("該当する曲がありません。");
     return;
   }
+
+  // ここで一度だけシャッフル
+  activeSongs = shuffleSongs(filtered);
 
   sortedOrder = [];
   insertIndex = 0;
@@ -676,20 +731,17 @@ startButton.addEventListener("click", () => {
   showNextComparison();
 });
 
-/* ---- 選択ボタン（アルゴリズム修正版） ----
-   左＝既存の曲が好き → 新しい曲はそれより下側を探す
-   右＝新しい曲が好き → 上側（前の方）に入る
-*/
+/* ---- 選択ボタン（左右＋引き分け） ---- */
 choiceLeftBtn.addEventListener("click", () => {
   pushHistory();
-  // left(既存) の方が好み → 挿入候補はもっと下に
+  // 左＝既存の曲が好み → 挿入候補はもっと下に
   low = mid + 1;
   showNextComparison();
 });
 
 choiceRightBtn.addEventListener("click", () => {
   pushHistory();
-  // right(新曲) の方が好み → もっと上に
+  // 右＝新しい曲が好み → もっと上に
   high = mid;
   showNextComparison();
 });
@@ -701,6 +753,7 @@ choiceDrawBtn.addEventListener("click", () => {
   showNextComparison();
 });
 
+/* ひとつ戻る */
 backButton.addEventListener("click", () => {
   popHistory();
 });
@@ -753,37 +806,36 @@ saveImageBtn.addEventListener("click", () => {
   });
 });
 
-/* ---- X共有（アプリ優先→Webフォールバック） ---- */
-function buildShareText(){
+/* ---- X共有（アプリ優先＋Webフォールバック） ---- */
+shareXBtn.addEventListener("click", () => {
   if(!currentSortedSongs || !currentSortedSongs.length){
-    return "BEYOOOOONDS楽曲ソート 結果\n\n（結果がありません）";
+    alert("結果がありません。先にソートを完了してください。");
+    return;
   }
-  const lines = [];
-  lines.push("BEYOOOOONDS楽曲ソート 結果","");
+
   const n = Math.min(5, currentSortedSongs.length);
+  const lines = [];
+  lines.push("BEYOOOOONDS楽曲ソート 結果");
+  lines.push("");
   for(let i=0;i<n;i++){
-    lines.push(`${i+1}位 ${currentSortedSongs[i].title}`);
+    lines.push(`${i+1}. ${currentSortedSongs[i].title}`);
   }
   lines.push("");
   lines.push("#ビヨ曲ソート");
+  lines.push("@beyomusicsort");
   lines.push("https://beyomusic-sort.github.io/1019/");
-  return lines.join("\n");
-}
 
-shareXBtn.addEventListener("click", () => {
-  const text = buildShareText();
+  const text = lines.join("\n");
   const encoded = encodeURIComponent(text);
-  const appUrl = "twitter://post?message=" + encoded;
-  const webUrl = "https://x.com/intent/post?text=" + encoded;
 
-  const start = Date.now();
+  // アプリ優先
+  const appUrl = "twitter://post?message=" + encoded;
   window.location.href = appUrl;
+
+  // アプリが無い場合のみWeb版へフォールバック
   setTimeout(() => {
-    const elapsed = Date.now() - start;
-    if(elapsed < 800){
-      window.location.href = webUrl;
-    }
-  }, 600);
+    window.open("https://twitter.com/intent/tweet?text=" + encoded, "_blank");
+  }, 500);
 });
 </script>
 </body>
