@@ -39,23 +39,22 @@
     main {
       max-width: 900px;
       margin: 0 auto;
-      padding: 12px 18px 6px;
+      padding: 10px 18px 4px;
     }
 
     #site-title {
-      margin-top: 8px;
+      margin-top: 6px;
       margin-bottom: 8px;
       text-align: center;
     }
 
-    /* トップページタイトル */
+    /* トップタイトル：少し大きめ＆折り返しOKにして絵文字が切れないように */
     #site-title h1 {
       font-family: 'M PLUS Rounded 1c', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 1.6rem;  /* 少し大きめに */
+      font-size: 1.6rem;
       font-weight: 800;
       margin: 0;
       letter-spacing: 0.03em;
-      white-space: nowrap;
     }
 
     /* 結果ページでは上部タイトル非表示 */
@@ -64,14 +63,14 @@
     }
 
     h2 {
-      font-size: 0.9rem;
-      margin: 4px 0 4px;
+      font-size: 0.88rem;
+      margin: 2px 0 2px;
       text-align: center;
     }
 
     .card {
-      padding: 10px 0 8px;
-      margin: 4px 0 6px;
+      padding: 8px 0 6px;
+      margin: 4px 0 4px;
     }
 
     /* トップページカテゴリ */
@@ -84,6 +83,7 @@
       width: 100%;
     }
 
+    /* カテゴリ枠：中央寄せ＆スマホで余白を減らす */
     .category-item {
       display: flex;
       align-items: center;
@@ -92,10 +92,9 @@
       border-radius: 999px;
       border: 1.5px solid var(--border);
       background: #fff;
-      font-size: 0.96rem;
-      font-weight: 600;
-      width: 80%;
-      max-width: 320px;
+      font-size: 0.98rem;
+      font-weight: 650;
+      width: min(360px, 100%);
       justify-content: flex-start;
     }
 
@@ -107,7 +106,7 @@
     .category-note {
       font-size: 0.78rem;
       color: var(--text-sub);
-      margin-top: 3px;
+      margin-top: 2px;
       text-align: center;
     }
 
@@ -154,11 +153,11 @@
     }
 
     #btn-start-sort {
-      min-width: 210px;
+      min-width: 220px;
       min-height: 44px;
       padding: 10px 24px;
       font-size: 0.95rem;
-      margin-top: 12px;
+      margin-top: 14px;
     }
 
     /* ソート中画面 */
@@ -177,16 +176,16 @@
     }
 
     .song-choice {
-      padding: 16px 14px;
+      padding: 18px 16px;
       border-radius: 18px;
       background: #ffffff;
       cursor: pointer;
-      border: 2.4px solid rgba(126, 99, 199, 0.32);
+      border: 2.4px solid rgba(126, 99, 199, 0.28);
       text-align: center;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
-      font-size: 1.05rem;
-      font-weight: 600;
+      font-size: 1.06rem;
+      font-weight: 650;
     }
 
     .song-choice:active {
@@ -201,8 +200,10 @@
       gap: 8px;
       margin-bottom: 8px;
       flex-wrap: wrap;
+      margin-top: 2px;
     }
 
+    /* 引き分け / ひとつ戻る：同じ薄めデザイン */
     .sort-sub-btn-row .btn-secondary {
       flex: 1;
       min-width: 0;
@@ -220,8 +221,8 @@
 
     #btn-reset,
     #btn-back-to-top {
-      font-size: 0.85rem;
-      font-weight: 600;
+      font-size: 0.86rem;
+      font-weight: 650;
       color: var(--text-sub);
       background: transparent;
       border: none;
@@ -240,7 +241,7 @@
     }
     .progress-bar {
       width: 100%;
-      height: 10px;
+      height: 12px;
       border-radius: 999px;
       background: #f0eefb;
       overflow: hidden;
@@ -277,13 +278,15 @@
       font-size: 0.8rem;
     }
 
+    /* 結果全体：キャプチャ時の余白も兼ねる */
     .result-wrapper {
       background: #fff;
       border-radius: 12px;
-      padding: 18px 16px 10px;
+      padding: 18px 16px 12px;
+      margin-top: 2px;
     }
 
-    /* 結果タイトル：絵文字付きセンター */
+    /* 結果タイトル */
     .result-title {
       font-family: 'M PLUS Rounded 1c', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-size: 1.4rem;
@@ -291,7 +294,6 @@
       text-align: center;
       margin: 2px 0 8px;
       letter-spacing: 0.03em;
-      white-space: nowrap;
     }
 
     .result-instruction {
@@ -306,23 +308,35 @@
       padding: 0;
     }
 
-    /* ★ 結果リスト：番号とテキストをきっちり揃える */
     .song-result-item {
       padding: 8px 0 9px;
       border-bottom: 1px solid #f1f1f5;
       cursor: pointer;
       width: 100%;
       box-sizing: border-box;
-      display: grid;
-      grid-template-columns: 2.4em 1fr;
-      column-gap: 4px;
-      align-items: flex-start;
     }
-    .song-result-item:last-child { border-bottom: none; }
+    .song-result-item:last-child { border-bottom:none; }
 
+    .song-result-main {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    /* タイトル行：数字＋曲名 */
+    .song-result-title-line {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1px;
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    /* ランク番号：全順位紫＋固定幅で頭を揃える */
     .rank-num {
-      grid-column: 1;
-      grid-row: 1 / span 3;
+      display: inline-block;
+      width: 2.2em;
       color: var(--accent);
       font-weight: 700;
       font-size: 1.05rem;
@@ -331,8 +345,7 @@
     }
 
     .song-result-title-text {
-      grid-column: 2;
-      grid-row: 1;
+      flex: 1;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -340,26 +353,24 @@
       text-overflow: ellipsis;
       line-height: 1.3;
       font-size: 1rem;
-      font-weight: 600;
     }
 
+    /* 歌手名・クレジットの左位置を曲名頭と揃える */
     .song-result-artist {
-      grid-column: 2;
-      grid-row: 2;
       font-size: 0.8rem;
       color: var(--text-sub);
+      margin-left: calc(2.2em + 4px);
     }
 
     .song-result-credits {
-      grid-column: 2;
-      grid-row: 3;
       font-size: 0.74rem;
       color: var(--text-sub);
       margin-top: 3px;
+      margin-left: calc(2.2em + 4px);
       display: none;
       line-height: 1.4;
     }
-    .song-result-item.open .song-result-credits { display: block; }
+    .song-result-item.open .song-result-credits { display:block; }
 
     .result-footer-link {
       margin-top: 8px;
@@ -368,13 +379,13 @@
 
     .result-footer-link button {
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.86rem;
     }
 
     footer {
       max-width: 900px;
-      margin: 8px auto 8px;
-      padding: 0 16px 4px;
+      margin: 4px auto 6px;
+      padding: 0 16px 2px;
       font-size: 0.78rem;
       color: var(--text-sub);
       text-align: center;
@@ -531,7 +542,7 @@
       }, false);
     })();
 
-    // ★ 楽曲データ（フル）
+    // ★ 楽曲データ（全部入り）
     const rawSongs = [
       { title:"眼鏡の男の子", album:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist", artist:"BEYOOOOONDS", lyric:"星部ショウ", compose:"星部ショウ", arrange:"大久保薫" },
       { title:"ニッポンノD・N・A！", album:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist", artist:"BEYOOOOONDS", lyric:"野沢トオル", compose:"星部ショウ", arrange:"星部ショウ" },
@@ -854,9 +865,14 @@
       sortedIds.forEach((id, idx) => {
         const s = getSongById(id);
         if (!s) return;
-
         const li = document.createElement("li");
         li.className = "song-result-item";
+
+        const main = document.createElement("div");
+        main.className = "song-result-main";
+
+        const titleLine = document.createElement("div");
+        titleLine.className = "song-result-title-line";
 
         const rankSpan = document.createElement("span");
         rankSpan.className = "rank-num";
@@ -865,6 +881,9 @@
         const titleSpan = document.createElement("span");
         titleSpan.className = "song-result-title-text";
         titleSpan.textContent = s.title;
+
+        titleLine.appendChild(rankSpan);
+        titleLine.appendChild(titleSpan);
 
         const artistEl = document.createElement("div");
         artistEl.className = "song-result-artist";
@@ -879,11 +898,11 @@
           "作曲： " + s.compose + "<br>" +
           "編曲： " + s.arrange;
 
-        li.appendChild(rankSpan);
-        li.appendChild(titleSpan);
-        li.appendChild(artistEl);
-        li.appendChild(creditsEl);
+        main.appendChild(titleLine);
+        main.appendChild(artistEl);
+        main.appendChild(creditsEl);
 
+        li.appendChild(main);
         li.addEventListener("click", () => {
           li.classList.toggle("open");
         });
@@ -896,7 +915,7 @@
 
     function sendResultToSheet(rankingTitles) {
       const mode = currentModeLabel || "";
-      const rankingStr = rankingTitles.join("/");
+      const rankingStr = rankingTitles.join("/");  // スラッシュ区切り
       const top1 = rankingTitles[0] || "";
       const top5 = rankingTitles.slice(0, 5).join("/");
 
