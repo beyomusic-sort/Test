@@ -581,6 +581,256 @@
       }, false);
     })();
 
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>🫟BEYOOOOONDS楽曲ソート🎵</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<!-- 丸フォント -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@600;700&display=swap" rel="stylesheet">
+
+<!-- 画像保存用 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+
+<style>
+:root{
+  --purple:#8d6aff;
+  --light:#f5f1ff;
+  --text:#222;
+  --sub:#777;
+}
+
+body{
+  margin:0;
+  background:#fff;
+  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color:var(--text);
+  text-align:center;
+  -webkit-text-size-adjust:100%;
+  overflow-x:hidden;
+}
+
+/* タイトル （★折り返させない）*/
+#title{
+  font-family:'M PLUS Rounded 1c';
+  font-size:1.45rem;
+  font-weight:800;
+  margin:20px 0 6px;
+  letter-spacing:0.03em;
+  white-space:nowrap;
+}
+
+/* ─── ①トップカテゴリ改善 ─── */
+.category-box{
+  width:80%;
+  max-width:320px;
+  margin:8px auto;
+  padding:11px 14px;
+  border-radius:999px;
+  border:2px solid #d4c7ff;
+  text-align:left;
+  font-size:1.0rem;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+/* 開始ボタン */
+#start{
+  margin-top:18px;
+  padding:14px 0;
+  width:70%;
+  max-width:350px;
+  background:var(--purple);
+  color:#fff;
+  font-size:1.2rem;
+  font-weight:800;
+  border-radius:26px;
+}
+
+/* ─── ②ソート中UI ─── */
+.sort-box{
+  margin-top:18px;
+  width:82%;max-width:500px;
+  margin-left:auto;margin-right:auto;
+}
+.choice{
+  border:2.4px solid rgba(141,106,255,.45);
+  font-size:1.15rem;
+  font-weight:600;
+  padding:18px;
+  margin-bottom:14px;
+  border-radius:16px;
+  transition:.1s;
+}
+.choice:active{
+  transform:scale(.96);
+  border-color:var(--purple);
+}
+.sub-btns button{
+  width:44%;
+  padding:10px 0;
+  font-size:1.0rem;
+  font-weight:600;
+  border-radius:14px;
+  border:2px solid #cfc2ff;
+}
+#reset,#backHome{
+  font-size:1.05rem;
+  font-weight:700;
+  color:var(--sub);
+  margin-top:12px;
+}
+
+/* 進捗太く */
+#bar{
+  width:82%;max-width:500px;
+  margin:12px auto 6px;
+  height:12px;border-radius:999px;background:#eae7ff;
+}
+#bar-in{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--purple),#bfadff);
+  border-radius:999px;
+}
+
+/* ─── ③結果画面 ─── */
+#result-title{
+  font-family:'M PLUS Rounded 1c';
+  font-size:1.45rem;
+  font-weight:800;
+  margin-bottom:8px;
+  white-space:nowrap;
+}
+
+/* 結果タイトル 🫟🎵 付き */
+#result-title::before{content:"🫟";}
+#result-title::after{content:"🎵";}
+
+/* タップ展開情報 */
+.result-item{
+  border-bottom:1.2px solid #eceafd;
+  padding:10px;
+  cursor:pointer;
+}
+.rank{
+  color:var(--purple);
+  font-size:1.25rem;
+  font-weight:800;
+}
+.song{
+  font-size:1.15rem;
+  font-weight:700;
+  line-height:1.3;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.artist{
+  font-size:.83rem;color:var(--sub);
+  margin-left:28px;
+}
+
+/* ▼ タップ展開クレジット */
+.credit{
+  font-size:.75rem;
+  margin-left:28px;
+  color:#666;
+  display:none;
+}
+.open .credit{display:block;}
+
+/* ─── 画像保存時 余白追加 🔥 ─── */
+.capture-area{
+  padding:40px 28px !important;
+  background:#fff;
+}
+
+/* footer上に動かした → スクロールしない位置 */
+footer{
+  margin-top:22px;
+  font-size:.86rem;color:var(--sub);
+}
+
+</style>
+</head>
+<body>
+
+<!-- =================== 1. トップページ =================== -->
+<section id="page-start">
+
+<h1 id="title">🫟BEYOOOOONDS楽曲ソート🎵</h1>
+
+<p style="margin-bottom:4px;">カテゴリを選択してください</p>
+<p style="font-size:.82rem;color:var(--sub);margin-top:-2px;">複数選択できます</p>
+
+<label class="category-box"><input type="checkbox" value="BEYOOOOONDS">BEYOOOOONDS</label>
+<label class="category-box"><input type="checkbox" value="ユニット">ユニット</label>
+<label class="category-box"><input type="checkbox" value="ソロ">ソロ</label>
+<label class="category-box"><input type="checkbox" value="演劇女子部">演劇女子部</label>
+
+<button id="start">ソートをはじめる</button>
+
+<p style="font-size:.75rem;color:var(--sub);margin-top:18px;">
+※非公式 / 寸劇・伴奏のみの曲は含まない
+</p>
+
+<footer>制作 : @beyomusicsort</footer>
+
+</section>
+
+<!-- =================== 2. ソートページ =================== -->
+<section id="page-sort" style="display:none;">
+
+<div class="sort-box">
+<p style="margin-bottom:8px;">好きな曲をタップで選択</p>
+
+<div class="choice" id="a"></div>
+<div class="choice" id="b"></div>
+
+<div class="sub-btns">
+<button id="draw">引き分け</button>
+<button id="back">ひとつ戻る</button>
+</div>
+
+<div id="bar"><div id="bar-in"></div></div>
+<p id="percent" style="font-size:.9rem;margin-top:3px;">0%</p>
+
+<p id="reset">最初からやり直す</p>
+</div>
+
+</section>
+
+<!-- =================== 3. 結果 =================== -->
+<section id="page-result" style="display:none;">
+
+<p style="font-size:.75rem;color:var(--sub);">
+※ページを閉じると結果は消えます  
+保存・共有推奨
+</p>
+
+<button id="shareX">Xで共有</button>
+<button id="saveImg" style="background:var(--purple);color:#fff;margin-left:6px;">画像保存</button>
+
+<div id="capture" class="capture-area">
+
+<h2 id="result-title">BEYOOOOONDS楽曲ソート 結果</h2>
+<p style="font-size:.7rem;color:var(--sub);margin-top:-4px;">曲名タップでクレジット表示</p>
+
+<div id="result"></div>
+
+<p id="backHome" style="margin-top:18px;">トップページに戻る</p>
+
+</div>
+<br><footer>制作 : @beyomusicsort</footer>
+</section>
+
     // 楽曲データ
     const rawSongs = [
       { title: "眼鏡の男の子",
@@ -1731,5 +1981,8 @@
       });
     });
   </script>
+
+</body>
+</html>
 </body>
 </html>
