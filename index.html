@@ -289,7 +289,7 @@
     /* 結果タイトル */
     .result-title {
       font-family: 'M PLUS Rounded 1c', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 1.0rem;
+      font-size: 1.2rem;
       font-weight: 800;
       text-align: center;
       margin: 2px 0 8px;
@@ -506,7 +506,7 @@
           <!-- この中をキャプチャ -->
           <div id="result-capture-area" class="result-wrapper">
             <div class="result-title">
-              🫟BEYOOOOONDS楽曲ソート結果🎵
+              🫟結果🎵
             </div>
             <p class="result-instruction" data-html2canvas-ignore="true">
 曲名をタップすると楽曲のクレジットが表示されます。
@@ -1020,7 +1020,7 @@
         .slice(0, 5)
         .map(el => el.textContent.trim());
 
-      let text = "BEYOOOOONDS楽曲ソート結果\n\n";
+      let text = "BEYOOOOONDS楽曲ソート 結果\n\n";
       titles.forEach((t, i) => {
         text += (i + 1) + "．" + t + "\n";
       });
