@@ -286,15 +286,15 @@
       padding: 18px 16px 10px;
     }
 
-    /* 結果タイトル：🫟…結果🎵 にする */
+      /* 結果タイトル：🫟…結果🎵 にする（モバイルで少し小さめ） */
     .result-title {
       font-family: 'M PLUS Rounded 1c', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       font-weight: 800;
       text-align: center;
       margin: 2px 0 8px;
       letter-spacing: 0.03em;
-      white-space: nowrap;
+      white-space: nowrap;  /* 折り返さず1行に */
     }
 
     .result-instruction {
@@ -302,7 +302,13 @@
       color: var(--text-sub);
       margin-bottom: 6px;
     }
-
+    /* スマホ幅のときはタイトル少し小さくして必ず1行に収める */
+    @media (max-width: 480px) {
+      #site-title h1,
+      .result-title {
+        font-size: 1.1rem;
+      }
+    }
     .song-result-list {
       list-style: none;
       margin: 0;
@@ -324,7 +330,7 @@
       gap: 1px;
     }
 
-    .song-result-title-line {
+       .song-result-title-line {
       font-size: 1rem;
       font-weight: 600;
       margin-bottom: 1px;
@@ -334,8 +340,8 @@
     }
 
     .rank-num {
-      display: inline-block;
-      min-width: 1.7em;
+      flex: 0 0 2.2em;          /* 番号部分の幅を固定 */
+      text-align: right;
       color: var(--accent);
       font-weight: 700;
       font-size: 1.05rem;
@@ -352,23 +358,24 @@
       font-size: 1rem;
     }
 
-    /* ★歌手名・クレジットの左位置を揃える */
+      /* ★歌手名・クレジットの左位置を、曲名の頭に揃える */
     .song-result-artist {
       font-size: 0.8rem;
       color: var(--text-sub);
-      padding-left: 1.6em;   /* ここを少し調整して曲名の頭と揃え気味に */
+      margin-left: 2.2em;      /* rank-num と同じ幅だけずらす */
     }
 
     .song-result-credits {
       font-size: 0.74rem;
       color: var(--text-sub);
       margin-top: 3px;
-      padding-left: 1.6em;   /* クレジットも同じ位置から */
+      margin-left: 2.2em;      /* クレジットも同じ位置から */
+      padding-left: 0;
       display: none;
       line-height: 1.4;
     }
-    .song-result-item.open .song-result-credits { display:block; }
-
+    .song-result-item.open .song-result-credits { display: block; }
+    
     .result-footer-link {
       margin-top: 8px;
       text-align: center;
