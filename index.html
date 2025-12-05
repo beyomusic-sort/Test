@@ -58,8 +58,9 @@
       white-space: nowrap;   /* 折り返しさせない */
     }
 
+    /* ★結果ページでは上部タイトル非表示にする */
     body.is-result #site-title {
-      display: false;
+      display: none;
     }
 
     h2 {
@@ -957,11 +958,23 @@
       showScreen("start");
     }
 
-    // タップ反応は click に統一
-    choiceTop.addEventListener("click", handleChooseTop);
-    choiceBottom.addEventListener("click", handleChooseBottom);
-    btnDraw.addEventListener("click", handleDraw);
-    btnBack.addEventListener("click", handleBack);
+    // --- 高速タップ版（click→pointerdown） ---
+    let tapLock = false;
+    function tapWrap(fn){
+      if(tapLock) return;         // 連打時の詰まり防止
+      tapLock = true;
+      try {
+        fn();
+      } finally {
+        setTimeout(()=> tapLock=false, 80); // 反応速度維持しつつ連打OK
+      }
+    }
+
+    choiceTop.addEventListener("pointerdown", () => tapWrap(handleChooseTop));
+    choiceBottom.addEventListener("pointerdown", () => tapWrap(handleChooseBottom));
+    btnDraw.addEventListener("pointerdown", () => tapWrap(handleDraw));
+    btnBack.addEventListener("pointerdown", () => tapWrap(handleBack));
+
     btnReset.addEventListener("click", resetAll);
     btnBackToTop.addEventListener("click", resetAll);
 
