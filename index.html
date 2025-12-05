@@ -59,7 +59,7 @@
     }
 
     body.is-result #site-title {
-      display: none;
+      display: false;
     }
 
     h2 {
@@ -351,17 +351,18 @@
       font-size: 1rem;
     }
 
+    /* ★歌手名・クレジットの左位置を揃える */
     .song-result-artist {
       font-size: 0.8rem;
       color: var(--text-sub);
-      padding-left: 1.9em;
+      padding-left: 1.6em;   /* ここを少し調整して曲名の頭と揃え気味に */
     }
 
     .song-result-credits {
       font-size: 0.74rem;
       color: var(--text-sub);
       margin-top: 3px;
-      padding-left: 1.9em;
+      padding-left: 1.6em;   /* クレジットも同じ位置から */
       display: none;
       line-height: 1.4;
     }
@@ -537,7 +538,7 @@
       }, false);
     })();
 
-    // ★ 楽曲データ（あなたが送ってくれたリストを元に統合）
+    // ★ 楽曲データ
     const rawSongs = [
       { title:"眼鏡の男の子", album:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist", artist:"BEYOOOOONDS", lyric:"星部ショウ", compose:"星部ショウ", arrange:"大久保薫" },
       { title:"ニッポンノD・N・A！", album:"1stシングル 眼鏡の男の子/ニッポンノD・N・A！/Go Waist", artist:"BEYOOOOONDS", lyric:"野沢トオル", compose:"星部ショウ", arrange:"星部ショウ" },
@@ -805,7 +806,6 @@
       const insertSong = getSongById(currentInsertId);
       const midSong = getSongById(midId);
 
-      // 同じ曲が出ないように
       if (!insertSong || !midSong || insertSong.id === midSong.id) {
         bsLow = bsMid + 1;
         proceedBinaryStep();
